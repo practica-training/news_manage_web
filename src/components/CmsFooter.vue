@@ -3,7 +3,7 @@
 <!--    :class="{'cms-footer-position':HasScroll}"-->
     <el-row v-show="IsShow" v-cloak class="cms-footer">
         <el-col :sm="24" :md="6" class="cms-footer-img-box">
-            <img src="../static/images/logo/dgutlogo.png"/>
+            <img src="../static/images/logo/logo.png"/>
         </el-col>
         <el-col :sm="24" :md="8" class="cms-footer-box">
             <template v-if="CmsConfig">
@@ -74,6 +74,11 @@
 
     .cms-footer-img-box{
         padding-top: 1rem;
+    }
+
+    .cms-footer-img-box > img{
+        height: 5rem;
+        width: 5rem;
     }
 
     .cms-footer-box{

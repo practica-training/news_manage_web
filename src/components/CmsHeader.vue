@@ -14,20 +14,16 @@
                         <!--                        显示中文标题和英文标题-->
                         <div class="cms-title-head">
                             <div class="cms-title cms-not-copy" @click="toScholWebSide" title="点击跳转学校官网">
-                                <div class="cms-title cms-not-copy cms-title-shcool">東莞理工學院</div>
-                                <div class="cms-title-en cms-not-copy cms-title-shcool-en">DONGGUAN UNIVERSITY OF TECHNOLOGY</div>
-                            </div>
-                            <div class="cms-title cms-not-copy" @click="toCyberspaceWebSide" title="首页">
-                                <div class="cms-title cms-not-copy cms-title-netword">网络空间安全学院</div>
-                                <div class="cms-title-en cms-not-copy cms-title-netword-en">SCHOOL OF CYBERSPACE SECURITY</div>
+                                <div class="cms-title cms-not-copy cms-title-shcool">ShowNews</div>
+                                <div class="cms-title-en cms-not-copy cms-title-shcool-en">ShowNews——闻,所未闻</div>
                             </div>
                         </div>
                     </div>
                     <div class="cms-date-box">
                         <!--                        时间-->
-                        <el-tooltip effect="light" content="点击查看校历" placement="left">
-                            <div class="cms-date" @click="showSchoolDate = true">{{cmsDate}}</div>
-                        </el-tooltip>
+<!--                        <el-tooltip effect="light" content="点击查看校历" placement="left">-->
+<!--                            <div class="cms-date" @click="showSchoolDate = true">{{cmsDate}}</div>-->
+<!--                        </el-tooltip>-->
                         <!--                        搜索框和登录-->
                         <div class="cms-login-search">
                             <!--                            登录-->
@@ -170,7 +166,6 @@
 
     .cms-title-logo > img {
         border-radius: 50%;
-        box-shadow: 0 0 0.4rem #e0e0e0;
     }
 
     .cms-title-head {

@@ -17,7 +17,7 @@ import Print from 'vue-print-nb';
 Vue.use(Print);
 
 //图片预览插件
-import ImageViewer from 'imageViewer';
+import ImageViewer from './components/imageViewer';
 Vue.use(ImageViewer);
 
 // import vuePicturePreview from 'vue-picture-preview'
