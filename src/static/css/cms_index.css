@@ -1,0 +1,325 @@
+/* 导航栏 */
+.cms-navbar {
+	background-color: #0a1054 !important;
+	border-color: #0a1054;
+}
+
+.cms-navbar-li>a {
+	font-size: 1.4rem !important;
+	color: #efefef !important;
+}
+
+.dropdown-menu>li>a {
+	color: #0a1054 !important;
+}
+
+/* 导航栏的按钮 */
+.cms-navbar-button {
+	border: none !important;
+}
+
+.cms-navbar-button>span {
+	background-color: #efefef !important;
+}
+
+.navbar-default .navbar-toggle:focus,
+.navbar-default .navbar-toggle:hover {
+	background-color: #2F7AA6 !important;
+}
+
+/* 导航栏的标题 */
+.cms-navbar-brand {
+	color: #efefef !important;
+}
+
+@media screen and (max-width:768px) {
+	.cms-navbar-collapse {
+		background-color: #fefefe !important;
+	}
+
+	.cms-navbar-li {
+		text-align: center;
+	}
+
+	.cms-navbar-li:hover {
+		background-color: #efefef !important;
+	}
+
+	.cms-navbar-li>a {
+		color: #666666 !important;
+	}
+}
+
+/* 导航栏的时间 */
+.cms-time {
+	text-align: center;
+	font-size: 1.5rem;
+	padding-top: 1.5rem;
+	display: flex;
+	justify-content: space-around;
+	flex-flow: wrap;
+}
+
+.cms-time > a{
+	height: 3rem !important;
+}
+
+/* 导航栏的时间 */
+
+/* 手机导航的logo */
+.cms_phone_logo {
+	display: inline-block !important;
+	height: 1.6rem;
+	width: 1.6rem;
+	margin-right: 0.5rem;
+}
+
+/* 手机导航的logo */
+
+@media screen and (min-width:768px) {
+	.cms-navbar {
+		display: flex !important;
+		justify-content: space-between !important;
+	}
+}
+
+
+/* 导航栏 */
+
+
+/* 轮播图 */
+.bananarBox {
+	padding: 0 2rem;
+}
+
+@media screen and (max-width:768px) {
+	.bananarBox {
+		padding: 0;
+	}
+}
+
+.cms-shutter-btn>li {
+	border-radius: 0 !important;
+}
+
+/* 轮播图 */
+
+/* 中间主体 */
+.main {
+	/* position: absolute; */
+	height: auto;
+	min-height: 600px;
+	overflow:auto;
+	margin-top: 1.6rem;
+	padding: 1rem 2rem;
+	z-index: 1;
+}
+
+
+.cms-news-information-box {
+	padding: 0px 2rem;
+	border: none !important;
+	box-shadow: none !important;
+}
+
+
+
+.cms-news-information {
+	border: none !important;
+	box-shadow: none !important;
+	padding: 0 !important;
+}
+
+.cms-news-box {
+	margin-top: 15px;
+	padding: 0 !important;
+	cursor: pointer;
+}
+
+
+.cms-news-box:hover {
+	box-shadow: 0px 0px 20px #dedede;
+}
+
+.cms-news-img {
+	padding: 8px !important;
+	background-color: #f9f9f9;
+}
+
+.cms-news-info {
+	padding: 1.4rem !important;
+	background-color: #f9f9f9;
+}
+
+
+.cms-news-info2 {
+	padding: 0rem 1.4rem 0.5rem 1.4rem !important;
+	background-color: #f9f9f9;
+}
+
+
+/* 标题 */
+.cms-news-info-title {
+	font-size: 1.5rem;
+	height: 30px;
+	padding: 5px;
+	font-weight: bold;
+	color: #666666;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.cms-news-info-title2 {
+	font-size: 1.3rem;
+	color: #666666;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* 文本介绍 */
+.cms-news-info-introduce {
+	font-size: 1.2rem;
+	color: #999999;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* 中间的底部*/
+.cms-main-footer-box {
+	padding: 0;
+}
+
+/* 中间主体 */
+
+/* 底部 */
+
+.cms-footer-absolute {
+	position: absolute;
+	bottom: 0;
+}
+
+
+.footer {
+	padding: 0.5rem;
+}
+
+@media screen and (min-width:768px) {
+	.navbar .nav>li:hover .dropdown-menu {
+		display: block;
+	}
+}
+
+.cms-logo {
+	height: 90px;
+	padding: 8px 2rem;
+}
+
+.panel {
+	background-color: initial;
+	box-shadow: none;
+}
+
+.cms-form-group {
+	padding: 0.6rem 0;
+	opacity: 0.95;
+}
+
+.cms-search-input {
+	display: inline-block;
+	background-color: #fff;
+	color: #333;
+	padding: 6px 0px 6px 12px;
+	font-size: 14px;
+	margin-bottom: 0;
+	white-space: nowrap;
+	vertical-align: middle;
+	-ms-touch-action: manipulation;
+	touch-action: manipulation;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	background-image: none;
+	border: 1px solid #ccc;
+	border-bottom-left-radius: 4px;
+	border-top-left-radius: 4px;
+	border-bottom-right-radius: 0px;
+	border-top-right-radius: 0px;
+}
+
+.cms-search-btn {
+	display: inline-block;
+	border-bottom-left-radius: 0px;
+	border-top-left-radius: 0px;
+	border-bottom-right-radius: 4px;
+	border-top-right-radius: 4px;
+	color: #fff;
+	background-color: #5bc0de;
+	border-color: #46b8da;
+	padding: 6px 12px;
+	font-size: 14px;
+	text-align: center;
+	white-space: nowrap;
+	vertical-align: middle;
+	-ms-touch-action: manipulation;
+	touch-action: manipulation;
+	cursor: pointer;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	background-image: none;
+	border: 1px solid #46b8da;
+}
+
+.cms-not-copy {
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	-khtml-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+}
+
+.cms-ul>li {
+	cursor: pointer;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	-khtml-user-select: none;
+	-o-user-select: none;
+	user-select: none;
+}
+
+.cms-pointer {
+	cursor: pointer;
+}
+
+.cms-bg-head {
+	background: #0a1054 !important;
+	background: -webkit-linear-gradient(to left, #00b4db, #0a1054) !important;
+	background: linear-gradient(to left, #00b4db, #0a1054) !important;
+	color: #ffffff !important;
+}
+
+.cms-bg-head>div {
+	color: #ffffff !important;
+}
+
+.cms-news-list{
+	
+}
+
+.cms-news-list:hover{
+	box-shadow: 4px 0 0 #e0e0e0 inset;
+	background-color: #f0f0f0 !important;
+}
+
+.cms-news-list>td{
+	padding: 1rem !important;
+	vertical-align: middle !important;
+	font-size: 1.5rem;
+}

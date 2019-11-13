@@ -1,0 +1,11 @@
+{
+  "name": "imageviewer",
+  "version": "1.0.0",
+  "description": "## 使用步骤/How to use ## \t1.将插件包下载 \t2.将imageViewer文件夹放到工程里 \t3.在main中引入  //import imageViewer from 'path/imageViewer' \t4.Vue.use(imageViewer) //注意要在vue实例化执之前引入 \t4.在需要点击查看的图片上加 @click=\"$imageViewer\"  //  <img src=\"/static/img/img.jpg\" @click=\"$imageViewer\"/>     5.在config里进行相应配置 *** \t1. Download the plugin package \t2. Put the imageViewer folder into the project \t3. Introduce //import imageViewer from 'path/imageViewer' in main \t4.Vue.use (imageViewer) / / Note that to be introduced before the vue instantiation \t4. Add @click=\"$imageViewer\" // <img src=\"/static/img/img.jpg\" @click=\"$imageViewer\"/> to the image you need to click to view. \t5. Configure it in config",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
