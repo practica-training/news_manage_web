@@ -51,6 +51,7 @@ import {
     Loading,     //加载组件
     Notification,//通知组件
     Message,     //消息组件
+    MessageBox
 } from 'element-ui';
 
 //引入组件,设为全局,其他组件则按需引入
@@ -69,6 +70,7 @@ Vue.use(Loading.directive);
 Vue.prototype.$loading = Loading.service;            //将加载组件挂载到Vue实例上
 Vue.prototype.$notify = Notification;                //将通知组件挂载到Vue实例上
 Vue.prototype.$message = Message;                    //将消息组件挂载到Vue实例上
+Vue.prototype.$confirm = MessageBox.confirm;         //将弹出确认组件挂载到Vue实例上
 
 import 'element-ui/lib/theme-chalk/index.css';       //基础的样式
 import 'element-ui/lib/theme-chalk/display.css';     //隐藏类，比如xs时隐藏
