@@ -6,61 +6,64 @@
             <el-row :gutter="10" style="margin: 0;">
                 <el-col :span="24" class="cms-header">
                     <div class="cms-header-bgc"></div>
-                    <div class="cms-title-bar" style="height: 100%;">
-                        <!--                        显示LOGO-->
-                        <div class="cms-title-logo" @click="toCyberspaceWebSide">
-                            <img style="height: 100%;width: auto;" src="../static/images/logo/logo.png"/>
-                        </div>
-                        <!--                        显示中文标题和英文标题-->
-                        <div class="cms-title-head">
-                            <div class="cms-title cms-not-copy" @click="toScholWebSide" title="点击跳转学校官网">
-                                <div class="cms-title cms-not-copy cms-title-shcool">ShowNews</div>
-                                <div class="cms-title-en cms-not-copy cms-title-shcool-en">ShowNews——闻,所未闻</div>
+                    <el-col :span="14" class="cms-no-padding">
+                        <div class="cms-title-bar">
+                            <!--                        显示LOGO-->
+                            <div class="cms-title-logo" @click="toCyberspaceWebSide">
+                                <img src="../static/images/logo/logo.png"/>
+                            </div>
+                            <!--                        显示中文标题和英文标题-->
+                            <div class="cms-title-head">
+                                <div class="cms-title cms-not-copy" @click="toScholWebSide" title="点击跳转学校官网">
+                                    <span class="cms-title-school">東莞理工學院</span>
+                                    <span class="cms-title-school-en">DONGGUAN UNIVERSITY OF TECHNOLOGY</span>
+                                </div>
+                                <div class="cms-title cms-not-copy" @click="toCyberspaceWebSide" title="首页">
+                                    <span class="cms-title-netword">网络空间安全学院</span>
+                                    <span class="cms-title-netword-en">SCHOOL OF CYBERSPACE SECURITY</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="cms-date-box">
-                        <!--                        时间-->
-<!--                        <el-tooltip effect="light" content="点击查看校历" placement="left">-->
-<!--                            <div class="cms-date" @click="showSchoolDate = true">{{cmsDate}}</div>-->
-<!--                        </el-tooltip>-->
-                        <!--                        搜索框和登录-->
-                        <div class="cms-login-search">
-                            <!--                            登录-->
-                            <div style="margin-top: 0 !important;" @click="loginTo" class="cms-login-button cms-header-login-button cms-login-button-bg">
-                                <span class="el-icon-user-solid"></span>
-                            </div>
-                            <!--                            搜索-->
-                            <div>
-                                <el-form :inline="true" ref="form" class="demo-form-inline cms-form-flex" size="mini"
-                                         style="outline: none;">
-                                    <el-form-item class="cms-form-item">
-                                        <el-input class="cms-form-input" v-model="keyword" name="keyword"
-                                                  type="text"></el-input>
-                                    </el-form-item>
+                    </el-col>
+                    <el-col :span="10" class="cms-header-other-box cms-no-padding">
+                        <div class="cms-date-box">
+                            <!--                        时间-->
+                            <div class="cms-date" @click="showSchoolDate = true">{{cmsDate}}</div>
+                            <!--                        搜索框和登录-->
+                            <div class="cms-login-search">
+                                <!--                            登录-->
+                                <div style="margin-top: 0 !important;" @click="loginTo"
+                                     class="cms-login-button cms-header-login-button cms-login-button-bg">
+                                    <span class="el-icon-user-solid"></span>
+                                </div>
+                                <!--                            搜索-->
+                                <div>
+                                    <el-form :inline="true" ref="form" class="demo-form-inline cms-form-flex"
+                                             size="mini"
+                                             style="outline: none;">
+                                        <el-form-item class="cms-form-item">
+                                            <el-input class="cms-form-input" v-model="keyword" name="keyword"
+                                                      type="text"></el-input>
+                                        </el-form-item>
 
-                                    <!--                                    防止转行-->
-                                    <el-form-item style="display: none;">
-                                        <el-input type="text"></el-input>
-                                    </el-form-item>
-                                    <!--                                    防止转行-->
+                                        <!--                                    防止转行-->
+                                        <el-form-item style="display: none;">
+                                            <el-input type="text"></el-input>
+                                        </el-form-item>
+                                        <!--                                    防止转行-->
 
-                                    <el-form-item class="cms-form-item">
-                                        <el-button class="cms-form-button" icon="el-icon-search" type="primary"
-                                                   @click="searchTo"></el-button>
-                                    </el-form-item>
-                                </el-form>
+                                        <el-form-item class="cms-form-item">
+                                            <el-button class="cms-form-button" icon="el-icon-search" type="primary"
+                                                       @click="searchTo"></el-button>
+                                        </el-form-item>
+                                    </el-form>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </el-col>
                 </el-col>
             </el-row>
         </div>
-
-        <el-dialog width="90%" :visible.sync="showSchoolDate">
-            <img class="cms-school-date" src="../static/images/school_date.png"/>
-            <img class="cms-school-date" src="../static/images/school_day_date.png"/>
-        </el-dialog>
     </header>
     <!-- header -->
 </template>
@@ -111,34 +114,131 @@
             },
         },
         computed: {
-            cmsDate() {//计算当前几年几月几日第几周星期几
-                let startTime = this.CmsConfig.startTime;//得到开始时间
-
-                //字符串处理
-                let tmp = (startTime || "").split(" ")[0];
-                tmp = (tmp || "").split("-");
-
-                //格式化开始时间
-                let date1 = new Date(parseInt(tmp[0]), parseInt(tmp[1] - 1), parseInt(tmp[2]));
+            cmsDate() {//计算当前几年几月几日星期几
                 //得到现在的时间
-                let date2 = new Date();
-                //计算现在是第几周
-                let week = parseInt((date2.getTime() - date1.getTime()) / 1000 / 60 / 60 / 24 / 7) + 1;
-
-                //生成时间（第几周 + 几年几月几日星期几）
-                return "第" + week + "周 " + date2.getFullYear() + "年" + (parseInt(date2.getMonth()) + 1) + "月" + date2.getDate() + "日 星期" + "日一二三四五六".charAt(date2.getDay());
+                let date = new Date();
+                //生成时间（几年几月几日星期几）
+                return date.getFullYear() + "年" + (parseInt(date.getMonth()) + 1) + "月" + date.getDate() + "日 星期" + "日一二三四五六".charAt(date.getDay());
             }
         },
     }
 </script>
 
 <style>
+    .cms-title-head{
+        z-index: 1;
+        padding-left: 1rem;
+        display: flex;
+    }
+
+    .cms-title{
+        display: flex;
+        flex-direction: column;
+        justify-content: left;
+        color: #ffffff;
+        margin-right: 10px;
+        position: relative;
+    }
+
+    .cms-title-school{
+        font-size: 2.6vw;
+        font-family: "\534E\6587\6977\4F53";
+        letter-spacing: .6vw;
+        transform: scaleY(1.3);
+        -ms-transform: scaleY(1.3);
+        -webkit-transform: scaleY(1.3);
+        -moz-transform: scaleY(1.3);
+        -o-transform: scaleY(1.3);
+        white-space: nowrap;
+    }
+
+    .cms-title-school-en {
+        font-size: 1vw;
+        font-family: "\6977\4F53";
+        letter-spacing: .3vw;
+        zoom: 50%;
+        white-space: nowrap;
+    }
+
+    .cms-title-netword{
+        position: relative;
+        top: .3rem;
+        font-size: 2.3vw;
+        font-family: "\534E\6587\6977\4F53";
+        transform: scaleY(1.3);
+        -ms-transform: scaleY(1.3);
+        -webkit-transform: scaleY(1.3);
+        -moz-transform: scaleY(1.3);
+        -o-transform: scaleY(1.3);
+        white-space: nowrap;
+    }
+
+    .cms-title-netword-en{
+        position: absolute;
+        bottom: 0;
+        font-size: 1vw;
+        font-family: "\6977\4F53";
+        zoom: 50%;
+        letter-spacing: .4vw;
+        word-spacing: .1vw;
+        white-space: nowrap;
+    }
+
+    @media screen and (max-width: 1200px){
+        .cms-title-school{
+            font-size: 2rem;
+            letter-spacing: .6rem;
+        }
+
+        .cms-title-school-en {
+            font-size: 0.8rem;
+        }
+
+        .cms-title-netword{
+            font-size: 1.7rem;
+        }
+
+        .cms-title-netword-en{
+            font-size: 0.8rem;
+            letter-spacing: 0.1rem;
+        }
+    }
+
+    @media screen and (max-width: 1100px){
+        .cms-title-school{
+            font-size: 1.8rem;
+            letter-spacing: .6rem;
+        }
+
+        .cms-title-school-en {
+            font-size: 0.8rem;
+            letter-spacing: 0.1rem;
+        }
+
+        .cms-title-netword{
+            font-size: 1.5rem;
+        }
+
+        .cms-title-netword-en{
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+        }
+    }
+
+    @media screen and (max-width: 1024px){
+        .cms-title-school{
+            font-size: 1.8rem;
+            letter-spacing: .4rem;
+        }
+    }
+
+    .cms-no-padding{
+        padding-top: 0 !important;
+    }
+
     .cms-header {
         padding: 1.4rem 2rem !important;
         height: 8rem;
-        /*background-color: rgba(10, 16, 84, 0.87);*/
-        display: flex;
-        justify-content: space-between;
     }
 
     .cms-header-bgc {
@@ -155,125 +255,38 @@
     }
 
     .cms-title-bar {
+        height: 6rem;
         display: flex;
         justify-content: left;
+        align-items: center;
         z-index: 999;
     }
 
     .cms-title-logo {
+        z-index: 0;
+        height: 100%;
         padding: 4px !important;
+        display: flex;
+        align-items: center;
     }
 
     .cms-title-logo > img {
         border-radius: 50%;
+        height: 80%;
+        width: auto;
+        box-shadow: 0 0 0.4rem #e0e0e0;
     }
 
-    .cms-title-head {
-        padding-left: 1rem;
-        display: flex;
-        flex-flow: row;
-        justify-content: left;
-        margin: auto 0;
-        color: #f9f9f9;
-    }
-
-    .cms-title-head > div {
-        text-shadow: 0px 0px 4px #e0e0e0;
-    }
-
-    .cms-title {
-        font-family: "华文楷体";
-        font-size: 2.3rem;
-        text-align: justify !important;
-        display: flex;
-        justify-content: flex-end;
-        flex-direction: column;
-        transform-origin: left;
-        cursor: pointer;
-    }
-
-    .cms-title-en {
-        transform-origin: left;
-        font-family: "楷体";
-        font-size: 0.5rem;
-    }
-
-    .cms-title-shcool{
-        letter-spacing: 0.4rem;
-        transform: scale(1,1.3);
-        -ms-transform: scale(1,1.3);
-        -webkit-transform: scale(1,1.3);
-        -moz-transform: scale(1,1.3);
-        -o-transform: scale(1,1.3);
-    }
-
-    .cms-title-shcool-en{
-        letter-spacing: 0.2rem;
-        word-spacing: 0.1rem;
-        text-indent: 0.4rem;
-        transform: scale(0.8,1.3);
-        -ms-transform: scale(0.8,1.3);
-        -webkit-transform: scale(0.8,1.3);
-        -moz-transform: scale(0.8,1.3);
-        -o-transform: scale(0.8,1.3);
-    }
-
-    .cms-title-netword{
-        font-family: "华文楷体";
-        font-size: 2.2rem;
-        -ms-transform: scale(0.9,1);
-        -webkit-transform: scale(0.9,1);
-        -moz-transform: scale(0.9,1);
-        -o-transform: scale(0.9,1);
-        position: relative;
-        left: -2.5rem;
-    }
-
-    .cms-title-netword-en{
-        letter-spacing: 0.2rem;
-        word-spacing: 0.1rem;
-        text-indent: 0.4rem;
-        transform: scale(0.9,1.3);
-        -ms-transform: scale(0.9,1.3);
-        -webkit-transform: scale(0.9,1.3);
-        -moz-transform: scale(0.9,1.3);
-        -o-transform: scale(0.9,1.3);
-        position: relative;
-        left: -2.5rem;
-    }
-
-
-    @media screen  and (max-width:1365px){
-        .cms-title-netword{
-            font-family: "华文楷体";
-            font-size: 2.2rem;
-            -ms-transform: scale(0.9,1);
-            -webkit-transform: scale(0.9,1);
-            -moz-transform: scale(0.9,1);
-            -o-transform: scale(0.9,1);
-            position: relative;
-            left: 0rem;
-        }
-
-        .cms-title-netword-en{
-            letter-spacing: 0.2rem;
-            word-spacing: 0.1rem;
-            text-indent: 0.4rem;
-            transform: scale(0.9,1.3);
-            -ms-transform: scale(0.9,1.3);
-            -webkit-transform: scale(0.9,1.3);
-            -moz-transform: scale(0.9,1.3);
-            -o-transform: scale(0.9,1.3);
-            position: relative;
-            left: 0rem;
-        }
-    }
-
-    .cms-title-icon{
+    .cms-title-icon {
         font-size: 1.6rem;
         display: flex;
         justify-content: center;
         flex-direction: column;
+    }
+
+    .cms-header-other-box{
+        display: flex;
+        justify-content: flex-end;
     }
 
     .cms-date-box {
@@ -285,14 +298,14 @@
         z-index: 999;
     }
 
-    .cms-date{
+    .cms-date {
         width: 100%;
         text-align: center;
         cursor: pointer;
     }
 
     /*校历*/
-    .cms-school-date{
+    .cms-school-date {
         width: 100%;
         height: auto;
     }
