@@ -13,7 +13,6 @@
                                 :cms-article-router-to="cmsArticleRouterTo"></cms-navigation-bar>
         </div>
         <router-view/>
-        <cms-side-box></cms-side-box>
         <!--        回到顶部组件-->
         <el-backtop :right="30"></el-backtop>
         <cms-footer :cms-config="cmsConfig" :has-scroll="hasScroll" :is-show="footerShow"></cms-footer>
@@ -95,7 +94,7 @@
                 "        -ms-transform: scale(0.8,1.3);\n" +
                 "        -webkit-transform: scale(0.8,1.3);\n" +
                 "        -moz-transform: scale(0.8,1.3);\n" +
-                "        -o-transform: scale(0.8,1.3);text-indent:2em;","padding:6rem;background-image: url('https://mp.weixin.qq.com/mp/qrcode?scene=10000004&size=102&__biz=MjM5MzQ3MzA1NQ==&mid=2651302514&idx=1&sn=428c1918272bd4809ef957fd0c26b55e&send_time=');background-size:100% 100%;","font-size:1rem;color:#666666;","font-size:0.9rem;color: #999999;");
+                "        -o-transform: scale(0.8,1.3);text-indent:2em;", "padding:6rem;background-image: url('https://mp.weixin.qq.com/mp/qrcode?scene=10000004&size=102&__biz=MjM5MzQ3MzA1NQ==&mid=2651302514&idx=1&sn=428c1918272bd4809ef957fd0c26b55e&send_time=');background-size:100% 100%;", "font-size:1rem;color:#666666;", "font-size:0.9rem;color: #999999;");
         }
     }
 
@@ -160,7 +159,7 @@
     }
 
     .cms-header-bg {
-        background-image: url("static/images/bg.jpg");
+        background-image: url("static/images/bg.png");
     }
 
     @media screen and (max-width: 1365px) {
@@ -200,29 +199,29 @@
         border: none;
     }
 
-    .el-tabs__nav{
+    .el-tabs__nav {
         width: 100%;
     }
 
-    #tab-0{
+    #tab-0 {
         width: 50%;
-        padding-right:0.4rem;
+        padding-right: 0.4rem;
     }
 
-    #tab-1{
+    #tab-1 {
         width: 50%;
         padding-left: 0.4rem;
     }
 
-    .el-tabs__active-bar{
+    .el-tabs__active-bar {
         display: none;
     }
 
-    .at-menu__submenu-title>i{
+    .at-menu__submenu-title > i {
         display: none !important;
     }
 
-    .el-timeline-item{
+    .el-timeline-item {
         padding-bottom: 6px;
     }
 </style>
