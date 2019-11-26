@@ -15,12 +15,8 @@
                             <!--                        显示中文标题和英文标题-->
                             <div class="cms-title-head">
                                 <div class="cms-title cms-not-copy" @click="toScholWebSide" title="点击跳转学校官网">
-                                    <span class="cms-title-school">東莞理工學院</span>
-                                    <span class="cms-title-school-en">DONGGUAN UNIVERSITY OF TECHNOLOGY</span>
-                                </div>
-                                <div class="cms-title cms-not-copy" @click="toCyberspaceWebSide" title="首页">
-                                    <span class="cms-title-netword">网络空间安全学院</span>
-                                    <span class="cms-title-netword-en">SCHOOL OF CYBERSPACE SECURITY</span>
+                                    <span class="cms-title-school">ShowNews</span>
+                                    <span class="cms-title-school-en">闻,所未闻</span>
                                 </div>
                             </div>
                         </div>
@@ -143,44 +139,14 @@
     .cms-title-school{
         font-size: 2.6vw;
         font-family: "\534E\6587\6977\4F53";
-        letter-spacing: .6vw;
-        transform: scaleY(1.3);
-        -ms-transform: scaleY(1.3);
-        -webkit-transform: scaleY(1.3);
-        -moz-transform: scaleY(1.3);
-        -o-transform: scaleY(1.3);
         white-space: nowrap;
     }
 
     .cms-title-school-en {
-        font-size: 1vw;
-        font-family: "\6977\4F53";
+        font-size: 1.5vw;
+        font-family: "华文圆体 Light";
         letter-spacing: .3vw;
-        zoom: 50%;
-        white-space: nowrap;
-    }
-
-    .cms-title-netword{
-        position: relative;
-        top: .3rem;
-        font-size: 2.3vw;
-        font-family: "\534E\6587\6977\4F53";
-        transform: scaleY(1.3);
-        -ms-transform: scaleY(1.3);
-        -webkit-transform: scaleY(1.3);
-        -moz-transform: scaleY(1.3);
-        -o-transform: scaleY(1.3);
-        white-space: nowrap;
-    }
-
-    .cms-title-netword-en{
-        position: absolute;
-        bottom: 0;
-        font-size: 1vw;
-        font-family: "\6977\4F53";
-        zoom: 50%;
-        letter-spacing: .4vw;
-        word-spacing: .1vw;
+        zoom: 60%;
         white-space: nowrap;
     }
 
@@ -193,15 +159,6 @@
         .cms-title-school-en {
             font-size: 0.8rem;
         }
-
-        .cms-title-netword{
-            font-size: 1.7rem;
-        }
-
-        .cms-title-netword-en{
-            font-size: 0.8rem;
-            letter-spacing: 0.1rem;
-        }
     }
 
     @media screen and (max-width: 1100px){
@@ -213,15 +170,6 @@
         .cms-title-school-en {
             font-size: 0.8rem;
             letter-spacing: 0.1rem;
-        }
-
-        .cms-title-netword{
-            font-size: 1.5rem;
-        }
-
-        .cms-title-netword-en{
-            font-size: 0.8rem;
-            letter-spacing: 2px;
         }
     }
 
