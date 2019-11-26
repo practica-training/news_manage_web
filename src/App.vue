@@ -25,7 +25,6 @@
     import CmsNavigationBar from './components/CmsNavigationBar.vue'
     import CmsFooter from './components/CmsFooter.vue'
     import store from './store'
-    import CmsSideBox from "./components/CmsSideBox";
     import CmsNavigationBarPlus from "./components/CmsNavigationBarPlus";
 
     export default {
@@ -57,7 +56,6 @@
         components: {
             CmsNavigationBarPlus,
             [Backtop.name]: Backtop,
-            CmsSideBox,
             CmsHeader,
             CmsNavigationBar,
             CmsFooter
