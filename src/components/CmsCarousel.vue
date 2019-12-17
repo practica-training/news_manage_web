@@ -145,4 +145,12 @@
         line-height: 3rem;
         font-size: 1rem;
     }
+
+    .cms-carousel-img {
+        height: auto;
+        width: 100%;
+        min-height: 100%;
+        min-width: 100%;
+        cursor: pointer;
+    }
 </style>

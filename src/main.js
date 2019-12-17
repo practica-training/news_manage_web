@@ -20,21 +20,7 @@ Vue.use(Print);
 import ImageViewer from './components/imageViewer';
 Vue.use(ImageViewer);
 
-// import vuePicturePreview from 'vue-picture-preview'
-// Vue.use(vuePicturePreview)
-// import VuePreview from 'vue-pic-preview'
-// Vue.use(VuePreview);
-
-// import VuePreview from 'vue-preview'
-// Vue.use(VuePreview);
-
-// import gallery from 'img-vuer'
-// Vue.use(gallery, {
-//     swipeThreshold: 150, // default 100
-//     isIndexShow: true, // show image index, default true
-//     useCloseButton: true, // trigger gallery close with close button, default true
-//     preload: true, // preload images in the same group, default true
-// })
+import animate from 'animate.css'
 
 //引入Element UI组件（按需引入）
 import {

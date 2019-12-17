@@ -48,21 +48,6 @@
             </el-col>
 
         </el-col>
-        <!--      相关链接-->
-        <el-col class="cms-home-box cms-bottom-distance" :span="24">
-            <el-col :md="23" :sm="22" :xs="22">
-                <el-card  style="background-color: #f0f0f0;">
-                    <div slot="header" class="cms-connect-link-title cms-not-copy">相关链接<i class="el-icon-s-promotion"></i></div>
-<!--                    教学管理系统-->
-                    <cms-select-list :list-data="otherLinkList[1].data" :list-title="otherLinkList[1].title"></cms-select-list>
-<!--                    <cms-drawer-list :list-data="otherLinkList" :list-title="otherLinkListTitle"></cms-drawer-list>-->
-<!--                    其他第三方链接-->
-                    <template v-for="(item,index) in schoolLinkList">
-                        <cms-select-list :key="index" :list-data="item.data" :list-title="item.title"></cms-select-list>
-                    </template>
-                </el-card>
-            </el-col>
-        </el-col>
     </el-row>
 </template>
 
@@ -70,7 +55,6 @@
     import CmsCarousel from "../components/CmsCarousel";          //轮播组件
     import CmsNoticeList from "../components/CmsNoticeList";      //通告公示组件
     import store from "../store";
-    import CmsSelectList from "../components/CmsSelectList";
     import CmsTapsList from "../components/CmsTapsList";         //教学动态和党建思政组件
 
     export default {
@@ -78,7 +62,6 @@
         store,
         components: {
             CmsTapsList,
-            CmsSelectList,
             CmsCarousel,
             CmsNoticeList,
         },
@@ -116,11 +99,6 @@
                 studentActiveList:[],              //学生活动列表
                 studentActiveTitle: "学生活动",     //学生活动标题
                 studentActiveUrl: "/list?34",      //学生活动列表'更多'的跳转地址
-
-                otherLinkList: [],                   //第三方的列表（学习资源和管理平台）
-                otherLinkListTitle: "学习资源与管理平台",//第三方列表的标题
-
-                schoolLinkList:[],                     //校内机构列表
             }
         },
         methods: {
@@ -222,14 +200,12 @@
         created() {
             this.cmsHost = this.$cmsInterface.DgutCMSHost;        //初始化根域名
             this.initCmsCarouselList();                           //初始化轮播图
-            this.initCmsNewsDynamicList(0);                       //初始化学院要闻列表
+            this.initCmsNewsDynamicList(0);                  //初始化学院要闻列表
             this.initCmsNoticeList();                             //初始化学院通知列表
             this.initCmsTeachingDynamicList();                    //初始化教学动态列表
             this.initCmsCommunistList();                          //初始化党建思政列表
             this.initCmsScienceList();                            //初始化科研动态列表
             this.initCmsStudentActiveList();                      //初始化学生活动列表
-            this.otherLinkList = this.$cmsInterface.OtherLinkList;//初始化第三方列表（学习资源和管理平台）
-            this.schoolLinkList=this.$cmsInterface.SchoolLinkList;//初始化学校机构列表
         }
     }
 </script>
@@ -239,7 +215,7 @@
         padding-top: 1rem;
     }
 
-    @media screen and (max-width: 1200px){
+    @media screen and (max-width: 991px){
         .cms-home{
             padding-top: 0;
         }

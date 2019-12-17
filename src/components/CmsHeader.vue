@@ -27,14 +27,9 @@
                             <div class="cms-date" @click="showSchoolDate = true">{{cmsDate}}</div>
                             <!--                        搜索框和登录-->
                             <div class="cms-login-search">
-                                <!--                            登录-->
-                                <div style="margin-top: 0 !important;" @click="loginTo"
-                                     class="cms-login-button cms-header-login-button cms-login-button-bg">
-                                    <span class="el-icon-user-solid"></span>
-                                </div>
                                 <!--                            搜索-->
-                                <div>
-                                    <el-form :inline="true" ref="form" class="demo-form-inline cms-form-flex"
+                                <div class="cms-search-box">
+                                    <el-form :inline="true" ref="form" class="cms-form-flex"
                                              size="mini"
                                              style="outline: none;">
                                         <el-form-item class="cms-form-item">
@@ -53,6 +48,12 @@
                                                        @click="searchTo"></el-button>
                                         </el-form-item>
                                     </el-form>
+                                </div>
+
+                                <!--                            登录-->
+                                <div style="margin-top: 0 !important;" @click="loginTo"
+                                     class="cms-login-button cms-header-login-button cms-login-button-bg">
+                                    <span class="el-icon-user-solid"></span>
                                 </div>
                             </div>
                         </div>
@@ -91,7 +92,8 @@
         },
         methods: {
             loginTo() {
-                window.open("https://css.dgut.edu.cn/admin/", "_blank");
+                //window.open("https://css.dgut.edu.cn/admin/", "_blank");
+                this.$router.push("/login");
             },
             searchTo() {
                 let routeUrl = this.$router.resolve({
@@ -252,12 +254,6 @@
         cursor: pointer;
     }
 
-    /*校历*/
-    .cms-school-date {
-        width: 100%;
-        height: auto;
-    }
-
     .cms-login-search {
         display: flex;
         justify-content: space-around;
@@ -276,7 +272,6 @@
         border: solid 1px #2b68a5;
         cursor: pointer;
         font-size: 1.5rem;
-        margin-right: 0.5rem;
         line-height: 1rem;
         text-align: center;
     }
@@ -292,6 +287,10 @@
         transition: 500ms;
         background-color: #3a8ee6;
         color: #f0f0f0;
+    }
+
+    .cms-search-box{
+        margin-right: 0.5rem;
     }
 
     .cms-form-flex {
