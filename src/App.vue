@@ -6,14 +6,14 @@
 
 <script>
     export default {
-        name: 'app',
+        name: 'app'
     }
 
 </script>
 
 <style>
     @import "static/css/cms_index.css";
-
+    @import "static/css/egg_paint.css";
     [v-cloak] {
         display: none;
     }
@@ -65,12 +65,21 @@
         background-color: #f0f0f0;
     }
 
+    .egg-login-card > .el-card__header{
+        padding:1rem !important;
+        background-color: #fff;
+    }
+
     .el-card__body {
         padding: 0.5rem !important;
     }
 
+    .egg-login-card > .el-card__body{
+        padding:0.8rem !important;
+    }
+
     .cms-header-bg {
-        background-image: url("static/images/bg.jpg");
+        background-image: url("static/images/bg.png");
     }
 
     @media screen and (max-width: 1365px) {
@@ -134,5 +143,13 @@
 
     .el-timeline-item{
         padding-bottom: 6px;
+    }
+
+    .el-slider__runway.disabled .el-slider__bar {
+        background-color: #67c23a!important;
+    }
+
+    .el-slider__runway.disabled .el-slider__button {
+        border-color: #67c23a!important;
     }
 </style>

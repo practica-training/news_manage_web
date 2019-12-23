@@ -1,15 +1,12 @@
 <template>
     <!--    文章-->
     <el-row class="cms-article-box" :style="articleInfo.articleContent?'':'background-color: initial !important;'">
-        <el-col :md="3" :sm="4" class="hidden-xs-only">
-            <cms-side-bar :cms-columns="parentColumn" :curr-cid="currCid"
-                          :has-columns="currCid?true:false"></cms-side-bar>
-        </el-col>
+        <el-col :md="3" :sm="4" class="hidden-xs-only"></el-col>
         <el-col :md="16" :sm="19" :xs="24">
             <!--            有文章内容时-->
             <div v-if="articleInfo.articleContent">
                 <!--                返回按钮-->
-                <el-card class="hidden-xs-only" style="border: none;background-color: #f0f0f0;">
+                <el-card class="hidden-xs-only" style="border: none;background-color: #f0f0f0;padding: 0;">
                     <div class="cms-article-header cms-not-copy">
                         <div class="cms-table-title cms-cursor" @click="backToLastPage">
                             <i class="el-icon-s-promotion cms-rotate-y"></i>&nbsp;<span>返回</span>
@@ -32,38 +29,18 @@
                         </div>
                         <div id="article" class="cms-article-info" v-html="articleInfo.articleContent"></div>
                     </div>
-                    <!--                其他一些按钮-->
-                    <el-col :span="22" :offset="1" class="no-print hidden-sm-and-down">
-                        <el-card style="border: none;box-shadow:none;background-color: initial;">
-                            <div class="cms-article-util cms-article-header cms-not-copy">
-                                <div class="cms-article-util-item">
-                                    <el-button class="cms-article-util-button" @click="backToLastPage" type="info"
-                                               icon="el-icon-back" title="返回" circle></el-button>
-                                </div>
-                                <div class="cms-article-util-item hidden-md-and-down">
-                                    <el-button v-print="'#cmsArticle'" class="cms-article-util-button" type="primary"
-                                               icon="el-icon-printer" title="打印" circle></el-button>
-                                </div>
-                                <div class="cms-article-util-item">
-                                    <el-button class="cms-article-util-button" @click="toTop" icon="el-icon-top"
-                                               type="success" title="返回顶部" circle></el-button>
-                                </div>
-                                <div class="cms-article-util-item hidden-md-and-down">
-                                    <el-popover trigger="click" placement="top">
-                                        <div class="cms-qrcode" ref="qrcodeContainer"><span>手机扫一扫分享文章</span></div>
-                                        <el-button slot="reference" class="cms-article-util-button" @click="toShare"
-                                                   icon="el-icon-share"
-                                                   type="warning" title="分享" circle></el-button>
-                                    </el-popover>
-                                </div>
-                                <div class="cms-article-util-item">
-                                    <el-button class="cms-article-util-button" @click="toClose" type="danger"
-                                               icon="el-icon-close" title="关闭页面" circle></el-button>
-                                    <!--                                    <div>关闭页面</div>-->
-                                </div>
-                            </div>
-                        </el-card>
-                    </el-col>
+                </el-card>
+                <div class="cms-wall"></div>
+                <!--                评论-->
+                <el-card style="border: none;">
+                    <div class="cms-article-header cms-not-copy" slot="header" style="position: relative;">
+                        <div class="cms-comment-title">评论</div>
+                        <!--                评论按钮-->
+                        <el-button size="mini" class="cms-comment-button" type="default" plain round @click="showCommentDrawer=true">参与评论</el-button>
+                        <news-comment :show-drawer="showCommentDrawer"></news-comment>
+                    </div>
+                    <!--                    评论列表-->
+                    <news-show-comment :comments="newsComments"></news-show-comment>
                 </el-card>
             </div>
             <!--            没有文章时-->
@@ -90,6 +67,8 @@
 
 <script>
     import CmsSideBar from "../components/CmsSideBar"
+    import NewsComment from "../components/NewsComment";
+    import NewsShowComment from "../components/NewsShowComment";
     import store from "../store"
     import QRCode from 'qrcodejs2' //生成二维码
     import Vue from 'vue/dist/vue.js'
@@ -98,7 +77,9 @@
         name: "Article",
         store,
         components: {
-            CmsSideBar
+            CmsSideBar,
+            NewsComment,
+            NewsShowComment
         },
         data() {
             return {
@@ -119,6 +100,9 @@
                 qrCode2: null,    //工具栏的二维码
                 priviewUrl: "",    //预览图片地址,
                 imgList: [],
+
+                showCommentDrawer: false,//是否显示评论的抽屉
+                newsComments:[],//评论列表
             }
         },
         methods: {
@@ -246,6 +230,10 @@
 </script>
 
 <style>
+    .cms-wall{
+        height: 1.5rem;
+    }
+
     .cms-article-box {
         display: flex;
         justify-content: space-around;
@@ -280,6 +268,20 @@
         text-align: center;
         padding: 1rem 0.4rem 0 0.4rem;
         color: #0a1054;
+    }
+
+    .cms-comment-title{
+        font-size: 1.1rem;
+        text-align: center;
+        color: #0a1054;
+    }
+
+    .cms-comment-button{
+        position: absolute;
+        right: 0.5rem;
+        font-size: 0.8rem;
+        top: 0.5vh;
+        padding: 10px 20px !important;
     }
 
     .cms-article-title-e {

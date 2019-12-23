@@ -6,6 +6,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
+        userId:"",                               //用户Id
+        userInfo:"",                             //用户信息
         cmsConfig: "",                           //网站配置
         cmsColumns: [],                          //网站栏目
         cmsCarouselList: null,                   //首页轮播图
@@ -18,6 +20,12 @@ export default new Vuex.Store({
         cmsScienceList:null,                     //首页科研动态列表
     },
     mutations: {
+        setUserId(state,data){//保存用户ID
+            state.userId = data;
+        },
+        setUserInfo(state,data){//保存用户信息
+            state.userInfo = data;
+        },
         initCmsConfig(state, data) {             //初始化网站配置
             state.cmsConfig = data;
         },

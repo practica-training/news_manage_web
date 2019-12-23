@@ -16,7 +16,7 @@
             <div class="egg-home-box">
                 <el-row class="egg-login-box">
                     <el-col :xl="5" :lg="6" :md="8" :sm="16" :xs="22">
-                        <el-card>
+                        <el-card :class="'egg-login-card'">
                             <div slot="header">
                                 <span class="egg-login-box-header">登录</span>
                             </div>
@@ -45,11 +45,12 @@
                     :visible.sync="drawerShow"
                     :direction="direction" size="100%" :before-close="beforeCancelRegister" ref="registerDrawer">
                 <div slot="title" class="egg-register-box-title egg-not-copy">
-                    <img class="egg-login-logo" src="../static/images/logo/logo.png" draggable="false"><span>Egg Paint</span>
+                    <img class="egg-login-logo" src="../static/images/logo/logo.png"
+                         draggable="false"><span>Egg Paint</span>
                 </div>
                 <el-row class="egg-login-box">
                     <el-col :xl="5" :lg="6" :md="8" :sm="16" :xs="22">
-                        <el-card class="egg-register-box egg-not-copy">
+                        <el-card class="egg-register-box egg-not-copy egg-login-card">
                             <div slot="header">
                                 <span class="egg-login-box-header">注册</span>
                             </div>
@@ -68,7 +69,8 @@
                                               autocomplete="off"></el-input>
                                 </el-form-item>
                                 <el-form-item label="滑动验证">
-                                    <el-slider v-model="robotNum" :show-tooltip="false" :disabled="robotDisabled" @change="validateRobot" ></el-slider>
+                                    <el-slider v-model="robotNum" :show-tooltip="false" :disabled="robotDisabled"
+                                               @change="validateRobot"></el-slider>
                                 </el-form-item>
                                 <el-col :span="24" class="egg-flex egg-margin-bottom egg-flex-end">
                                     <el-button type="default" @click="submitRegister('registerData')" round>注册
@@ -94,8 +96,9 @@
 </template>
 
 <script>
-    import {Container,Main,Form, FormItem, Input, Drawer,Slider} from "element-ui"
+    import {Container, Main, Form, FormItem, Input, Drawer, Slider} from "element-ui"
     import store from '../store'
+
     export default {
         name: "Login",
         store,
@@ -106,7 +109,7 @@
             [FormItem.name]: FormItem,
             [Input.name]: Input,
             [Drawer.name]: Drawer,
-            [Slider.name]:Slider
+            [Slider.name]: Slider
         },
         data() {
             let validateUserName = (rule, value, callback) => {//检查登录的用户名
@@ -118,15 +121,15 @@
             let validateRegisterUserName = (rule, value, callback) => {//检查注册的用户名
                 if (!value) {
                     return callback(new Error('用户名不能为空'));
-                } else if(value.indexOf("_") != -1 || value.indexOf("/") != -1 || value.indexOf("-") != -1 && value.indexOf(".") != -1) {
+                } else if (value.indexOf("_") != -1 || value.indexOf("/") != -1 || value.indexOf("-") != -1 && value.indexOf(".") != -1) {
                     return callback(new Error('用户名出现非法字符'));
-                }else{//请求服务器是否重复
-                    this.$API.userCheckUserName(value).then(res => {
-                        if(res.data.error != "0"){//注册有错误
-                            return callback(new Error(res.data.error_message));
-                        }
-                        callback();
-                    });
+                } else {//请求服务器是否重复
+                    // this.$API.userCheckUserName(value).then(res => {
+                    //     if(res.data.error != "0"){//注册有错误
+                    //         return callback(new Error(res.data.error_message));
+                    //     }
+                    //     callback();
+                    // });
                 }
             };
             let validateUserPassword = (rule, value, callback) => {//检查登录密码
@@ -159,8 +162,8 @@
             return {
                 drawerShow: false,//是否显示注册的抽屉
                 direction: "ltr",//抽屉的打开方式 ltr从左往右开 rtl从右往左开 ttb从上往下开 btt从下往上开
-                robotNum:0,//检测是否是机器人滑动验证的值
-                robotDisabled:false,//是否可以滑动机器人的验证，不能滑动代表验证成功
+                robotNum: 0,//检测是否是机器人滑动验证的值
+                robotDisabled: false,//是否可以滑动机器人的验证，不能滑动代表验证成功
                 loginData: {//登录的表单数据
                     userName: "",
                     userPassword: "",
@@ -192,19 +195,19 @@
             }
         },
         methods: {
-            backHome(){//回到主页
+            backHome() {//回到主页
                 this.$router.push("/");
             },
-            validateRobot(){//检测是否是机器人
-                if(this.robotNum != 100){
+            validateRobot() {//检测是否是机器人
+                if (this.robotNum != 100) {
                     this.$message.info("请滑至最右端");
                     this.robotNum = 0;
-                }else{
+                } else {
                     this.$message.success("验证完成");
                     this.robotDisabled = true;
                 }
             },
-            beforeCancelRegister(done){//取消注册前
+            beforeCancelRegister(done) {//取消注册前
                 //取消注册前先清空数据
                 this.robotNum = 0;
                 this.robotDisabled = false;
@@ -215,7 +218,7 @@
                 }
                 done();
             },
-            cancelRegister(){//取消注册
+            cancelRegister() {//取消注册
                 this.$refs['registerDrawer'].closeDrawer();
             },
             submitLogin(formName) {//提交表单，登录
@@ -224,31 +227,16 @@
                 let that = this;
                 this.$refs[formName].validate((valid) => {
                     if (valid) {//检查通过
-                        if (this.loginData.userName.indexOf("_") != -1) {//如果用户名中出现 _ ，则是管理员
-                            this.$API.adminLogin(name, password).then(function (data) {
-                                if (data.error == "0") {//登录成功
-                                    //保存token
-                                    store.commit("setToken", data.token);
-                                    localStorage.setItem("token",data.token);
-                                    that.$router.push("/admin");
-                                } else {
-                                    that.$message.error("用户名或密码错误");
-                                }
-                            });
-                        } else {//否则是普通用户
-                            this.$API.userLogin(name, password).then(function (res) {
-                                window.console.log(res.data);
-                                if (res.data.error == "0") {//登录成功
-                                    //保存token
-                                    store.commit("setToken", res.data.token);
-                                    localStorage.setItem("token",res.data.token);
-                                    that.$router.push("/user");
-                                } else {
-                                    that.$message.error("用户名或密码错误");
-                                }
-                            });
-                        }
-                    }else{//检查不通过
+                        this.$API.userLogin(name, password).then(function (res) {
+                            window.console.log(res.data);
+                            if (res.data.success) {//登录成功
+                                store.commit("setUserId",res.data.id);
+                                window.history.go(-1);
+                            } else {
+                                that.$message.error("用户名或密码错误");
+                            }
+                        });
+                    } else {//检查不通过
                         return false;
                     }
                 });
@@ -271,7 +259,7 @@
 </script>
 
 <style scoped>
-    .egg-container{
+    .egg-container {
         position: fixed;
         top: 0;
         left: 0;
@@ -387,11 +375,11 @@
         font-weight: bold;
     }
 
-    .egg-register-box{
+    .egg-register-box {
         margin-top: 3rem;
     }
 
-    .egg-cancel-register-box{
+    .egg-cancel-register-box {
         height: 4rem;
         width: 100%;
         padding-top: 1rem;
@@ -404,7 +392,7 @@
         color: #5b5b5b;
     }
 
-    .egg-cancel-register-box:hover{
+    .egg-cancel-register-box:hover {
         transition: 0.3s;
         background: linear-gradient(90deg, rgba(0, 174, 255, 0.5) 0%, rgba(51, 105, 231, 0.5) 100%);
         box-shadow: 0 -2px 15px #999999;

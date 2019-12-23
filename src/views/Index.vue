@@ -72,11 +72,20 @@
                     this.cmsColumns = res.data.slice(1);//从第一个开始
                     store.commit("initCmsColumns", res.data);
                 })
-            }
+            },
+            initUserInfo(){
+              if(store.state.userId){
+                  this.$API.getUserInfo().then(res => {
+                      let userInfo = res.data;
+                      store.commit("setUserInfo",userInfo);
+                  })
+              }
+            },
         },
         created() {
             this.initCmsConfig();
             this.initCmsColumns();
+            this.initUserInfo();
         },
         mounted() {
             if (this.$route.name != 'home') {
@@ -88,11 +97,6 @@
                 })
             }
             // eslint-disable-next-line no-console
-            console.log("%c东莞理工学院网络空间安全学院欢迎您\n%c\n%c扫描二维码关注学院公众号\n\n\n%c【如果发现什么bug或者有什么体验上的建议,欢迎联系1114822617@qq.com】", "font-family:'华文楷体';font-size:1.5rem;color: #155799;transform: scale(0.8,1.3);\n" +
-                "        -ms-transform: scale(0.8,1.3);\n" +
-                "        -webkit-transform: scale(0.8,1.3);\n" +
-                "        -moz-transform: scale(0.8,1.3);\n" +
-                "        -o-transform: scale(0.8,1.3);text-indent:2em;", "padding:6rem;background-image: url('https://mp.weixin.qq.com/mp/qrcode?scene=10000004&size=102&__biz=MjM5MzQ3MzA1NQ==&mid=2651302514&idx=1&sn=428c1918272bd4809ef957fd0c26b55e&send_time=');background-size:100% 100%;", "font-size:1rem;color:#666666;", "font-size:0.9rem;color: #999999;");
         }
     }
 </script>

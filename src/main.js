@@ -12,6 +12,9 @@ Vue.use(VueAxios, axios);
 Vue.prototype.$Post=Post;
 Vue.prototype.$Get=Get;
 
+import API from './utils/api'
+Vue.prototype.$API = API;
+
 //打印插件
 import Print from 'vue-print-nb';
 Vue.use(Print);

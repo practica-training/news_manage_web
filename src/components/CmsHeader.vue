@@ -51,9 +51,24 @@
                                 </div>
 
                                 <!--                            登录-->
-                                <div style="margin-top: 0 !important;" @click="loginTo"
+                                <div v-if="!userInfo" style="margin-top: 0 !important;" @click="loginTo"
                                      class="cms-login-button cms-header-login-button cms-login-button-bg">
                                     <span class="el-icon-user-solid"></span>
+                                </div>
+                                <div v-else class="cms-user-box">
+                                    <el-popover
+                                            placement="bottom"
+                                            trigger="click">
+                                            <div class="cms-user-info-title cms-not-copy">{{userInfo.userNickname}}</div>
+                                            <div class="cms-divide-line"></div>
+                                            <div class="cms-user-info-tap cms-not-copy">我的资料</div>
+                                            <div class="cms-user-info-tap cms-not-copy">我的文章</div>
+                                            <div class="cms-user-info-tap cms-not-copy">我的评论</div>
+                                            <div class="cms-user-info-tap cms-not-copy">我的消息</div>
+                                            <div class="cms-divide-line"></div>
+                                            <div class="cms-user-info-tap cms-not-copy">退出登录</div>
+                                        <el-button class="cms-userinfo-box" slot="reference" plain ><span class="el-icon-user-solid"></span></el-button>
+                                    </el-popover>
                                 </div>
                             </div>
                         </div>
@@ -66,20 +81,23 @@
 </template>
 
 <script>
-    import {Input, Form, FormItem, Dialog,Tooltip} from 'element-ui'
+    import {Input, Form, FormItem, Dialog,Tooltip,Popover} from 'element-ui'
+    import store from '../store'
     export default {
         name: "CmsHeader",
+        store,
         components: {
             [Input.name]: Input,
             [Form.name]: Form,
             [FormItem.name]: FormItem,
             [Dialog.name]:Dialog,
-            [Tooltip.name]:Tooltip
+            [Tooltip.name]:Tooltip,
+            [Popover.name]:Popover
         },
         data() {
             return {
                 keyword: "",
-                showSchoolDate:false,//是否显示校历
+                userInfo: store.state.userInfo,
             }
         },
         props: {
@@ -313,5 +331,46 @@
     .cms-form-button {
         border-top-left-radius: 0 !important;
         border-bottom-left-radius: 0 !important;
+    }
+
+    .cms-user-box{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .cms-userinfo-box{
+        font-size: 1.4rem !important;
+        cursor: pointer;
+        background-color: initial !important;
+        color: #FFFFFF !important;
+        border: none !important;
+        padding: 0 !important;
+    }
+
+    .cms-user-info-title{
+        text-align: center;
+        font-size: 1.2rem;
+        padding: 1px 5px;
+        color: #475669;
+    }
+
+    .cms-user-info-tap{
+        text-align: center;
+        font-size: 1rem;
+        cursor: pointer;
+        padding: 1px 5px;
+        color: #7B7B7B;
+    }
+
+    .cms-user-info-tap:hover{
+        transition: 0.5s;
+        color: #00b4db;
+    }
+
+    .cms-divide-line{
+        height: 1px;
+        background-color: #e0e0e0;
+        margin: 4px 0;
     }
 </style>
