@@ -6,8 +6,8 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
-        userId:"",                               //用户Id
-        userInfo:"",                             //用户信息
+        userId:localStorage.getItem("userId")?localStorage.getItem("userId"):"",//用户Id
+        userInfo:localStorage.getItem("userInfo")?JSON.parse(localStorage.getItem("userInfo")):"",//用户信息
         cmsConfig: "",                           //网站配置
         cmsColumns: [],                          //网站栏目
         cmsCarouselList: null,                   //首页轮播图

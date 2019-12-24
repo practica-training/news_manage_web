@@ -88,7 +88,7 @@
             <div class="egg-home-triangle egg-home-bottom-left"></div>
             <!--            左下角的三角形-->
 
-            <div class="egg-about-box" @click="goback">
+            <div class="egg-about-box" @click="goBack">
                 <i class="el-icon-arrow-left"></i>返回
             </div>
         </el-main>
@@ -228,10 +228,15 @@
                 this.$refs[formName].validate((valid) => {
                     if (valid) {//检查通过
                         this.$API.userLogin(name, password).then(function (res) {
-                            window.console.log(res.data);
                             if (res.data.success) {//登录成功
                                 store.commit("setUserId",res.data.id);
-                                window.history.go(-1);
+                                localStorage.setItem("userId",res.data.id);
+                                that.$API.getUserInfo().then(res => {
+                                    let userInfo = res.data;
+                                    store.commit("setUserInfo",userInfo);
+                                    localStorage.setItem("userInfo",JSON.stringify(userInfo));
+                                    that.$router.push("/");
+                                });
                             } else {
                                 that.$message.error("用户名或密码错误");
                             }
@@ -251,7 +256,7 @@
                     }
                 });
             },
-            goback() {//返回上一页
+            goBack() {//返回上一页
                 window.history.go(-1);
             },
         }

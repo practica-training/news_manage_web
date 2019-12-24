@@ -73,13 +73,16 @@
                     store.commit("initCmsColumns", res.data);
                 })
             },
-            initUserInfo(){
-              if(store.state.userId){
-                  this.$API.getUserInfo().then(res => {
-                      let userInfo = res.data;
-                      store.commit("setUserInfo",userInfo);
-                  })
-              }
+            initUserInfo() {
+                if (store.state.userId && store.state.userInfo) {
+                } else if (store.state.userId) {
+                    this.$API.getUserInfo().then(res => {
+                        let userInfo = res.data;
+                        store.commit("setUserInfo", userInfo);
+                        localStorage.setItem("userInfo", JSON.toString(userInfo));
+                    });
+                } else {
+                }
             },
         },
         created() {

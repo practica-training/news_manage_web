@@ -9,12 +9,12 @@
                     <el-col :span="14" class="cms-no-padding">
                         <div class="cms-title-bar">
                             <!--                        显示LOGO-->
-                            <div class="cms-title-logo" @click="toCyberspaceWebSide">
+                            <div class="cms-title-logo" @click="toIndexWebSide">
                                 <img src="../static/images/logo/logo.png"/>
                             </div>
                             <!--                        显示中文标题和英文标题-->
                             <div class="cms-title-head">
-                                <div class="cms-title cms-not-copy" @click="toScholWebSide" title="点击跳转学校官网">
+                                <div class="cms-title cms-not-copy" @click="toIndexWebSide" title="点击跳转首页">
                                     <span class="cms-title-school">ShowNews</span>
                                     <span class="cms-title-school-en">闻,所未闻</span>
                                 </div>
@@ -59,16 +59,43 @@
                                     <el-popover
                                             placement="bottom"
                                             trigger="click">
-                                            <div class="cms-user-info-title cms-not-copy">{{userInfo.userNickname}}</div>
-                                            <div class="cms-divide-line"></div>
-                                            <div class="cms-user-info-tap cms-not-copy">我的资料</div>
-                                            <div class="cms-user-info-tap cms-not-copy">我的文章</div>
-                                            <div class="cms-user-info-tap cms-not-copy">我的评论</div>
-                                            <div class="cms-user-info-tap cms-not-copy">我的消息</div>
-                                            <div class="cms-divide-line"></div>
-                                            <div class="cms-user-info-tap cms-not-copy">退出登录</div>
-                                        <el-button class="cms-userinfo-box" slot="reference" plain ><span class="el-icon-user-solid"></span></el-button>
+                                        <div class="cms-user-info-title cms-not-copy">{{userInfo.userNickname}}</div>
+                                        <div class="cms-divide-line"></div>
+                                        <div class="cms-user-info-tap cms-not-copy"
+                                             @click="showDrawer = true,activeName='myInfo'">我的资料
+                                        </div>
+                                        <div class="cms-user-info-tap cms-not-copy"
+                                             @click="showDrawer = true,activeName='myArticle'">我的文章
+                                        </div>
+                                        <div class="cms-user-info-tap cms-not-copy"
+                                             @click="showDrawer = true,activeName='myComment'">我的评论
+                                        </div>
+                                        <div class="cms-user-info-tap cms-not-copy"
+                                             @click="showDrawer = true,activeName='myMessage'">我的消息
+                                        </div>
+                                        <div class="cms-divide-line"></div>
+                                        <div class="cms-user-info-tap cms-not-copy" @click="logout">退出登录</div>
+                                        <el-button class="cms-userinfo-box" slot="reference" plain>
+                                            <img class="cms-user-avatar" :src="baseURL + userInfo.userAvatar">
+                                        </el-button>
                                     </el-popover>
+                                    <el-drawer
+                                            title=""
+                                            :visible.sync="showDrawer"
+                                            direction="ttb"
+                                            size="100%"
+                                            custom-class="cms-user-drawer">
+                                        <div class="cms-user-operation-panel">
+                                            <el-tabs v-model="activeName" @tab-click="clickTab">
+                                                <el-tab-pane label="我的资料" name="myInfo">
+                                                    <user-info :user-info="userInfo" :base-url="baseURL"></user-info>
+                                                </el-tab-pane>
+                                                <el-tab-pane label="我的文章" name="myArticle">我的文章</el-tab-pane>
+                                                <el-tab-pane label="我的评论" name="myComment">我的评论</el-tab-pane>
+                                                <el-tab-pane label="我的消息" name="myMessage">我的消息</el-tab-pane>
+                                            </el-tabs>
+                                        </div>
+                                    </el-drawer>
                                 </div>
                             </div>
                         </div>
@@ -81,8 +108,10 @@
 </template>
 
 <script>
-    import {Input, Form, FormItem, Dialog,Tooltip,Popover} from 'element-ui'
+    import {Input, Form, FormItem, Dialog, Tooltip, Popover, Drawer, Tabs, TabPane} from 'element-ui'
+    import UserInfo from "./UserInfo";
     import store from '../store'
+
     export default {
         name: "CmsHeader",
         store,
@@ -90,14 +119,28 @@
             [Input.name]: Input,
             [Form.name]: Form,
             [FormItem.name]: FormItem,
-            [Dialog.name]:Dialog,
-            [Tooltip.name]:Tooltip,
-            [Popover.name]:Popover
+            [Dialog.name]: Dialog,
+            [Tooltip.name]: Tooltip,
+            [Popover.name]: Popover,
+            [Drawer.name]: Drawer,
+            [Tabs.name]: Tabs,
+            [TabPane.name]: TabPane,
+            UserInfo,
         },
         data() {
             return {
                 keyword: "",
                 userInfo: store.state.userInfo,
+                showDrawer: false,
+                activeName: "myInfo",
+                baseURL:this.$API.BaseUrl
+            }
+        },
+        watch: {
+            '$store.state.userInfo': (newVal) => {
+                if(newVal){
+                    this.userInfo = newVal;
+                }
             }
         },
         props: {
@@ -119,14 +162,18 @@
                 });
                 window.open(routeUrl.href, '_blank');
             },
-            toScholWebSide(){
-                window.open("http://www.dgut.edu.cn/", '_blank');
+            clickTab(e) {
+                window.console.log(e)
             },
-            toCyberspaceWebSide(){
-                let routeUrl = this.$router.resolve({
-                    path: "/",
-                });
-                window.open(routeUrl.href, '_blank');
+            toIndexWebSide() {
+                this.$router.push("/");
+            },
+            logout() {
+                localStorage.removeItem("userId");
+                localStorage.removeItem("userInfo");
+                store.commit("setUserId", "");
+                store.commit("setUserInfo", "");
+                location.reload();
             },
         },
         computed: {
@@ -136,18 +183,18 @@
                 //生成时间（几年几月几日星期几）
                 return date.getFullYear() + "年" + (parseInt(date.getMonth()) + 1) + "月" + date.getDate() + "日 星期" + "日一二三四五六".charAt(date.getDay());
             }
-        },
+        }
     }
 </script>
 
 <style>
-    .cms-title-head{
+    .cms-title-head {
         z-index: 1;
         padding-left: 1rem;
         display: flex;
     }
 
-    .cms-title{
+    .cms-title {
         display: flex;
         flex-direction: column;
         justify-content: left;
@@ -156,7 +203,7 @@
         position: relative;
     }
 
-    .cms-title-school{
+    .cms-title-school {
         font-size: 2.6vw;
         font-family: "\534E\6587\6977\4F53";
         white-space: nowrap;
@@ -170,8 +217,8 @@
         white-space: nowrap;
     }
 
-    @media screen and (max-width: 1200px){
-        .cms-title-school{
+    @media screen and (max-width: 1200px) {
+        .cms-title-school {
             font-size: 2rem;
             letter-spacing: .6rem;
         }
@@ -181,8 +228,8 @@
         }
     }
 
-    @media screen and (max-width: 1100px){
-        .cms-title-school{
+    @media screen and (max-width: 1100px) {
+        .cms-title-school {
             font-size: 1.8rem;
             letter-spacing: .6rem;
         }
@@ -193,14 +240,14 @@
         }
     }
 
-    @media screen and (max-width: 1024px){
-        .cms-title-school{
+    @media screen and (max-width: 1024px) {
+        .cms-title-school {
             font-size: 1.8rem;
             letter-spacing: .4rem;
         }
     }
 
-    .cms-no-padding{
+    .cms-no-padding {
         padding-top: 0 !important;
     }
 
@@ -252,7 +299,7 @@
         flex-direction: column;
     }
 
-    .cms-header-other-box{
+    .cms-header-other-box {
         display: flex;
         justify-content: flex-end;
     }
@@ -307,7 +354,7 @@
         color: #f0f0f0;
     }
 
-    .cms-search-box{
+    .cms-search-box {
         margin-right: 0.5rem;
     }
 
@@ -333,13 +380,20 @@
         border-bottom-left-radius: 0 !important;
     }
 
-    .cms-user-box{
+    .cms-user-box {
         display: flex;
         flex-direction: column;
         justify-content: center;
     }
 
-    .cms-userinfo-box{
+    .cms-user-avatar{
+        height: 1.8rem;
+        width: 1.8rem;
+        border-radius: 50px;
+        box-shadow: 0 0 5px #f0f0f0;
+    }
+
+    .cms-userinfo-box {
         font-size: 1.4rem !important;
         cursor: pointer;
         background-color: initial !important;
@@ -348,14 +402,14 @@
         padding: 0 !important;
     }
 
-    .cms-user-info-title{
+    .cms-user-info-title {
         text-align: center;
         font-size: 1.2rem;
         padding: 1px 5px;
         color: #475669;
     }
 
-    .cms-user-info-tap{
+    .cms-user-info-tap {
         text-align: center;
         font-size: 1rem;
         cursor: pointer;
@@ -363,14 +417,18 @@
         color: #7B7B7B;
     }
 
-    .cms-user-info-tap:hover{
+    .cms-user-info-tap:hover {
         transition: 0.5s;
         color: #00b4db;
     }
 
-    .cms-divide-line{
+    .cms-divide-line {
         height: 1px;
         background-color: #e0e0e0;
         margin: 4px 0;
+    }
+
+    .cms-user-operation-panel {
+        padding: 0 1rem;
     }
 </style>

@@ -152,4 +152,14 @@
     .el-slider__runway.disabled .el-slider__button {
         border-color: #67c23a!important;
     }
+
+    .cms-user-operation-panel .el-tabs__nav{
+        display: flex;
+        justify-content: space-around;
+    }
+
+    .user-info-title .el-form-item__label{
+        font-size: 1.1rem;
+        color: #475669;
+    }
 </style>

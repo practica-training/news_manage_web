@@ -11,12 +11,6 @@ const Request = axios.create({
 
 // 添加request拦截器
 Request.interceptors.request.use(config => {
-    config.headers = {
-        'Content-Type': 'x-www-form-urlencoded',
-    };
-    // if (store.state.token) {//如果存在token
-    //     config.headers.Token = store.state.token;
-    // }
     return config
 }, error => {
     return Promise.reject(error);
@@ -33,11 +27,11 @@ Request.interceptors.response.use(
     }
 );
 
-let request = function (url, method, data) {
+let request = function (url, method, data,headers={'Content-Type': 'x-www-form-urlencoded'}) {
     return Request({
         url: url,
         method: method,
-        headers: {},
+        headers: headers,
         data: data,
     })
 };
@@ -61,14 +55,27 @@ export default {
         window.console.log(store.state.userId);
         return request(BaseUrl + "/manage/user/id/" + store.state.userId, "GET", {});
     },
-    //
-    //
-    // /**
-    //  * 检测用户名是否重复
-    //  */
-    // userCheckUserName: (userName) => {
-    //     return request(BaseUrl + "/user/register?userName=" + userName, "POST", {});
-    // },
+
+
+    /**
+     * 检测用户名是否重复
+     */
+    checkUserNickname: (userNickname) => {
+        // let formData = new FormData();
+        // formData.append("userNickname",userNickname);
+        return request(BaseUrl + "/manage/user/nickNameAlong?userNickname="+userNickname, "GET", {});
+    },
+
+    /**
+     * 上传头像
+     * @param file
+     * @returns {AxiosPromise}
+     */
+    uploadAvatar(file) {
+        let formData = new FormData(); //创建form对象
+        formData.append('file',file);//通过append向form对象添加数据
+        return request(BaseUrl + "/upload/image", "POST", formData,{'Content-Type':'multipart/form-data'});
+    },
     //
     // /**
     //  * 检测手机是否重复
