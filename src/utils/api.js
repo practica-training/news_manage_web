@@ -5,7 +5,7 @@ let BaseUrl = "http://10.60.9.86:8888";
 
 // 创建axios实例
 const Request = axios.create({
-    timeout: 30000, // 请求超时时间
+    timeout: 100000, // 请求超时时间10s
     withCredentials: true
 });
 
@@ -23,11 +23,11 @@ Request.interceptors.response.use(
     },
     error => {
         window.console.log("发生错误");
-        return Promise.reject(error)
+        return Promise.reject(error);
     }
 );
 
-let request = function (url, method, data,headers={'Content-Type': 'x-www-form-urlencoded'}) {
+let request = function (url, method, data,headers={}) {
     return Request({
         url: url,
         method: method,
@@ -51,6 +51,10 @@ export default {
         return request(BaseUrl + "/manage/user/userLogin", "POST", formData);
     },
 
+    /**
+     * 获取用户信息
+     * @returns {AxiosPromise}
+     */
     getUserInfo: () => {
         window.console.log(store.state.userId);
         return request(BaseUrl + "/manage/user/id/" + store.state.userId, "GET", {});
@@ -58,16 +62,23 @@ export default {
 
 
     /**
-     * 检测用户名是否重复
+     * 检测昵称是否重复
      */
     checkUserNickname: (userNickname) => {
-        // let formData = new FormData();
-        // formData.append("userNickname",userNickname);
         return request(BaseUrl + "/manage/user/nickNameAlong?userNickname="+userNickname, "GET", {});
     },
 
     /**
-     * 上传头像
+     * 检测手机号是否重复
+     * @param userPhone
+     * @returns {AxiosPromise}
+     */
+    checkUserPhone:(userPhone) =>{
+        return request(BaseUrl + "/manage/user/phoneAlong/"+userPhone, "GET", {});
+    },
+
+    /**
+     * 上传头像、实名认证图片
      * @param file
      * @returns {AxiosPromise}
      */
@@ -76,38 +87,66 @@ export default {
         formData.append('file',file);//通过append向form对象添加数据
         return request(BaseUrl + "/upload/image", "POST", formData,{'Content-Type':'multipart/form-data'});
     },
-    //
-    // /**
-    //  * 检测手机是否重复
-    //  */
-    // userCheckUserPhone: (userPhone) => {
-    //     return request(BaseUrl + "/user/register?userPhone=" + userPhone, "POST", {});
-    // },
-    //
-    // /**
-    //  * 用户注册
-    //  * @param userName
-    //  * @param userPassword
-    //  * @returns {AxiosPromise}
-    //  */
-    // userRegister: (userName, userPassword) => {
-    //     return request(BaseUrl + "/user", "POST", {
-    //         userName: userName,
-    //         userPassword: userPassword
-    //     });
-    // },
-    //
-    // /**
-    //  * 修改用户资料
-    //  * @param userInfo
-    //  */
-    // updateUserInfo:(userInfo) =>{
-    //     let data = {
-    //         userNickName : userInfo.userNickName,
-    //         userPhone:userInfo.userPhone,
-    //     };
-    //     return request(BaseUrl + "/user", "PATCH",data);
-    // }
+
+    /**
+     * 获得实名认证信息
+     * @returns {AxiosPromise}
+     */
+    getVerifiedInfo(){
+        return request(BaseUrl + "/manage/userVerified/id/" + store.state.userId, "GET", {});
+    },
+
+    /**
+     * 用户注册
+     * @param userName
+     * @param userPassword
+     * @returns {AxiosPromise}
+     */
+    userRegister: (userName, userPassword) => {
+        return request(BaseUrl + "/user", "POST", {
+            userName: userName,
+            userPassword: userPassword
+        });
+    },
+
+    /**
+     * 修改用户资料
+     * @param userInfo
+     */
+    updateUserInfo:(userInfo) =>{
+        let formData = new FormData(); //创建form对象
+        formData.append('userAvatar',userInfo.userAvatar);
+        formData.append('userNickname',userInfo.userNickname);
+        formData.append('userPassword',userInfo.userPassword);
+        formData.append('userPhone',userInfo.userPhone);
+        formData.append('userSex',userInfo.userSex);
+        return request(BaseUrl + "/manage/user/id/" + userInfo.id, "PUT",userInfo);
+    },
+
+    /**
+     * 获得用户消息列表
+     */
+    getUserMessages(){
+        return request(BaseUrl + "/manage/message/getUserMessage/id/" + store.state.userId, "GET",{});
+    },
+
+    /**
+     * 获得指定id的消息
+     * @param id
+     * @returns {AxiosPromise}
+     */
+    getMessageInfo(id){
+        return request(BaseUrl + "/manage/message/getMessage/id/" + id, "GET",{});
+    },
+
+    /**
+     * 发送消息、反馈
+     * @returns {AxiosPromise}
+     */
+    sendMessage(){
+        return request(BaseUrl + "/manage/message", "POST",{});
+    },
+
     test:() =>{
         return request(BaseUrl+"/manage/user/findPublicList", "GET",{});
     }

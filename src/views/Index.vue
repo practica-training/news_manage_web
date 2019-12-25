@@ -81,6 +81,7 @@
                         store.commit("setUserInfo", userInfo);
                         localStorage.setItem("userInfo", JSON.toString(userInfo));
                     });
+
                 } else {
                 }
             },

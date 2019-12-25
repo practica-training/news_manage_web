@@ -130,16 +130,16 @@
         data() {
             return {
                 keyword: "",
-                userInfo: store.state.userInfo,
+                userInfo: {},
                 showDrawer: false,
                 activeName: "myInfo",
                 baseURL:this.$API.BaseUrl
             }
         },
         watch: {
-            '$store.state.userInfo': (newVal) => {
-                if(newVal){
-                    this.userInfo = newVal;
+            getStoreUserInfo(newVal){
+                if(newVal && newVal != ""){
+                    this.userInfo = store.state.userInfo;
                 }
             }
         },
@@ -182,7 +182,14 @@
                 let date = new Date();
                 //生成时间（几年几月几日星期几）
                 return date.getFullYear() + "年" + (parseInt(date.getMonth()) + 1) + "月" + date.getDate() + "日 星期" + "日一二三四五六".charAt(date.getDay());
+            },
+
+            getStoreUserInfo(){
+                return store.state.userInfo;
             }
+        },
+        created() {
+            this.userInfo = store.state.userInfo;
         }
     }
 </script>

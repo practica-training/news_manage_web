@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import da from "element-ui/src/locale/lang/da";
+//import da from "element-ui/src/locale/lang/da";
 
 Vue.use(Vuex)
 
@@ -8,6 +8,7 @@ export default new Vuex.Store({
     state: {
         userId:localStorage.getItem("userId")?localStorage.getItem("userId"):"",//用户Id
         userInfo:localStorage.getItem("userInfo")?JSON.parse(localStorage.getItem("userInfo")):"",//用户信息
+        verifiedInfo:"",                         //实名认证信息
         cmsConfig: "",                           //网站配置
         cmsColumns: [],                          //网站栏目
         cmsCarouselList: null,                   //首页轮播图
@@ -25,6 +26,9 @@ export default new Vuex.Store({
         },
         setUserInfo(state,data){//保存用户信息
             state.userInfo = data;
+        },
+        setVerifiedInfo(state,data){//保存实名认证信息
+            state.verifiedInfo = data;
         },
         initCmsConfig(state, data) {             //初始化网站配置
             state.cmsConfig = data;
