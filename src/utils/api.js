@@ -89,6 +89,20 @@ export default {
     },
 
     /**
+     * 更新实名认证信息
+     * @param verifiedInfo
+     * @returns {AxiosPromise}
+     */
+    updateVerifiedInfo(verifiedInfo) {
+        let formData = new FormData(); //创建form对象
+        formData.append('realName',verifiedInfo.realName);//通过append向form对象添加数据
+        formData.append('idCard',verifiedInfo.idCard);//通过append向form对象添加数据
+        formData.append('photo',verifiedInfo.photo);//通过append向form对象添加数据
+        formData.append('userid',store.state.userId);//通过append向form对象添加数据
+        return request(BaseUrl + "/manage/userVerified", "POST", verifiedInfo);
+    },
+
+    /**
      * 获得实名认证信息
      * @returns {AxiosPromise}
      */
