@@ -68,21 +68,28 @@
                 })
             },
             initCmsColumns() {//初始化网站栏目
-                this.$Get(this.$cmsInterface.DgutGetAllColumns.url).then(res => {
-                    this.cmsColumns = res.data.slice(1);//从第一个开始
-                    store.commit("initCmsColumns", res.data);
-                })
+                if(store.state.cmsColumns.length != 0){
+                    this.cmsColumns = store.state.cmsColumns;
+                }else{
+                    this.$API.getNewsTypes().then(res => {
+                        if(res.data.success){
+                            let newsTypes = res.data.queryResult.list;
+                            window.console.log(newsTypes);
+                            this.cmsColumns = newsTypes;//从第一个开始
+                            store.commit("initCmsColumns",newsTypes);
+                        }
+                    })
+                }
             },
             initUserInfo() {
                 if (store.state.userId && store.state.userInfo) {
+                    return;
                 } else if (store.state.userId) {
                     this.$API.getUserInfo().then(res => {
                         let userInfo = res.data;
                         store.commit("setUserInfo", userInfo);
                         localStorage.setItem("userInfo", JSON.toString(userInfo));
                     });
-
-                } else {
                 }
             },
         },

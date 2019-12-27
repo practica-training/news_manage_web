@@ -7,12 +7,13 @@
             </div>
             <keep-alive>
                 <el-table row-class-name="cms-table-line" class="cms-select-news cms-not-copy" stripe
-                          :show-header="false" :data="newsList" @row-click="lookArticle" style="cursor: pointer;" :fit="true">
+                          :show-header="false" :data="newsList" @row-click="lookArticle" style="cursor: pointer;"
+                          :fit="true">
                     <el-table-column prop="title" :formatter="formatTitle">
                     </el-table-column>
                     <el-table-column align="right">
                         <template slot-scope="scope">
-                            <span>{{scope.row.createTime.split(' ')[0]}}&nbsp;</span>
+                            <span>{{scope.row.createTime}}&nbsp;</span>
                             <i class="el-icon-arrow-right"></i>
                         </template>
                     </el-table-column>
@@ -34,7 +35,7 @@
         },
         props: {
             TableData: {
-                type: Object,
+                type: Array,
             }
         },
         watch: {
@@ -42,29 +43,34 @@
                 this.loadingInstance = this.$loading();
             },
             TableData(newVal) {
-                if (newVal.content) {
-                    this.newsList = newVal.content;
-                    if (this.newsList.length > 0) {
-                        this.tapTitle = this.newsList[0].columns.columnName;
-                    } else {
-                        this.tapTitle = "当前栏目暂无数据";
-                    }
-                    this.$nextTick(() => {// 以服务的方式调用的 Loading 需要异步关闭
-                        setTimeout(() => {//设置定时器，为了看上去不像闪屏
-                            this.loadingInstance.close();
-                        }, 200);
-                    });
+                this.newsList = newVal;
+                if (this.newsList.length > 0) {
+                    this.tapTitle = "aaa";
+                } else {
+                    this.tapTitle = "当前栏目暂无数据";
                 }
+                this.$nextTick(() => {// 以服务的方式调用的 Loading 需要异步关闭
+                    setTimeout(() => {//设置定时器，为了看上去不像闪屏
+                        this.loadingInstance.close();
+                    }, 200);
+                });
             }
         },
         methods: {
             formatTitle(row) {
-                if (row.title) {//如果文章有标题，则不用修改
-                    return row.title;
-                } else {//没有标题则用栏目名称代替
-                    return row.columns.columnName;
-                }
+                return row.newsTitle;
             },
+            // content: "阿填6杀了！"
+            // createTime: 1247673600000
+            // failureReason: null
+            // id: "8a8180846eafdb1e016eafdc48240024"
+            // likeNumber: 400
+            // newsAvatar: null
+            // newsState: 1
+            // newsTitle: "王者荣耀"
+            // newsWeights: null
+            // publishTime: 1577238131000
+            // readNumber: 600
             lookArticle(row) {
                 this.$router.push({path: '/article?' + row.articleId});
                 // let routeUrl = this.$router.resolve({

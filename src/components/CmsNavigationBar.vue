@@ -1,56 +1,5 @@
 <template>
     <div>
-        <!--        当视图是sm且sm以下时候隐藏（最多md可见）-->
-<!--        <div class="hidden-sm-and-down">-->
-<!--            <el-menu-->
-<!--                    class="el-menu-demo cms-el-menu"-->
-<!--                    mode="horizontal"-->
-<!--                    :unique-opened="true"-->
-<!--                    background-color="#f0f0f0"-->
-<!--            >-->
-<!--                <el-menu-item class="el-submenu__title cms-el-menu-item"-->
-<!--                              style="line-height: 56px;border-color: initial !important;" @click="goHome">-->
-<!--                    <li role="menuitem" aria-haspopup="true" class="el-submenu">-->
-<!--                        <div class="el-submenu">-->
-<!--                            首页-->
-<!--                        </div>-->
-<!--                    </li>-->
-<!--                </el-menu-item>-->
-<!--                <template v-for="(item,index) in CmsColumns">-->
-<!--                    <el-menu-item :index="index.toString()" :key="item.cid" v-if="item.columns.length == 0"-->
-<!--                                  class="el-submenu__title cms-el-menu-item"-->
-<!--                                  style="line-height: 56px;border-color: initial !important;"-->
-<!--                                  @click="routerTo(item.cid,item.list,item.cid)">-->
-<!--                        <li role="menuitem" aria-haspopup="true" class="el-submenu">-->
-<!--                            <div class="el-submenu__title">-->
-<!--                                <span class="cms-router-link" style="padding: 0;">-->
-<!--                                    {{item.columnName}}-->
-<!--                                </span>-->
-<!--                            </div>-->
-<!--                        </li>-->
-<!--                    </el-menu-item>-->
-<!--                    <el-menu-item v-if="item.columns.length != 0" class="cms-el-menu-item" :key="item.cid"-->
-<!--                                  style="border-color: initial !important;">-->
-<!--                        <el-submenu :index="index.toString()">-->
-<!--                            <template slot="title">{{item.columnName}}</template>-->
-<!--                            <template v-for="(childItem,childIndex) in item.columns">-->
-<!--                                <el-menu-item class="cms-el-menu-item"-->
-<!--                                              @click="routerTo(childItem.cid,childItem.list,item.cid)"-->
-<!--                                              :key="childItem.cid"-->
-<!--                                              :index="index.toString() + '-' + childIndex.toString()"-->
-<!--                                              style="border-color: initial !important;">-->
-<!--                                        <span class="cms-router-link">-->
-<!--                                            {{childItem.columnName}}-->
-<!--                                        </span>-->
-<!--                                </el-menu-item>-->
-<!--                                <li :key="'separator' + childIndex" role="separator" class="cms-separator"></li>-->
-<!--                            </template>-->
-<!--                        </el-submenu>-->
-<!--                    </el-menu-item>-->
-<!--                </template>-->
-<!--            </el-menu>-->
-<!--        </div>-->
-
         <!--        当视图在md且md以上时隐藏(最多sm可见)-->
         <div class="hidden-md-and-up">
             <el-row>
@@ -59,8 +8,7 @@
                         <div class="cms-navigation-bar-logo" style="padding: 0 !important;">
                             <router-link to="/">
                                 <img style="height: 100%;width: auto;" src="../static/images/logo/logo.png"/>
-                                <span v-if="CmsConfig.websiteTitle">{{CmsConfig.websiteTitle.replace("东莞理工学院","")}}</span>
-                                <span v-else>网络空间安全学院</span>
+                                <span>Show News</span>
                             </router-link>
                         </div>
                         <div style="display: flex;justify-content: space-around;vertical-align: middle;">
@@ -90,29 +38,12 @@
                             </el-menu-item>
 
                             <template v-for="(item,index) in CmsColumns">
-                                <template v-if="item.columns.length != 0">
-                                    <el-submenu :key="item.cid" :index="index.toString()">
-                                        <template slot="title">
-                                            <span style="padding-left: 1.2rem;">{{item.columnName}}</span>
-                                        </template>
-                                        <el-menu-item-group v-for="(childItem,childIndex) in item.columns"
-                                                            :key="childItem.cid">
-                                            <el-menu-item @click="routerTo(childItem.cid,childItem.list,item.cid)"
-                                                          :index="index.toString() + '-' + childIndex.toString()"
-                                                          style="padding-left: 3rem;">
-                                                <i class="el-icon-d-arrow-right"></i>
-                                                <span>{{childItem.columnName}}</span>
-                                            </el-menu-item>
-                                        </el-menu-item-group>
-                                    </el-submenu>
-                                </template>
-                                <template v-if="item.columns.length == 0">
-                                    <el-menu-item :index="index.toString()" :key="item.cid"
-                                                  @click="routerTo(item.cid,item.list,item.cid)">
-                                        <span slot="title">{{item.columnName}}</span>
-                                    </el-menu-item>
-                                </template>
+                                <el-menu-item :index="index.toString()" :key="item.id"
+                                              @click="routerTo(item.id)">
+                                    <span slot="title">{{item.name}}</span>
+                                </el-menu-item>
                             </template>
+
                             <el-form :inline="true" ref="form" class="demo-form-inline cms-form-flex"
                                      style="justify-content: flex-start;padding: 0.6rem 0;" size="mini">
                                 <el-form-item class="cms-form-item" style="padding-left: 2.5rem;">
@@ -175,36 +106,10 @@
             },
         },
         methods: {
-            routerTo(cid, isList, parentCid) {//路由跳转,参数:cid(选中的cid),isList(是否是list),parentCid(父节点的cid)
+            routerTo(id) {//路由跳转,参数:cid(选中的cid),isList(是否是list),parentCid(父节点的cid)
                 this.navigatorBarPhoneOpen = [];
                 this.isShow = false;
-                if (isList) {//如果是列表
-                    store.commit("setCmsSelectColumnId", parentCid);//设置父节点
-                    this.$router.push({path: this.CmsColumnsRouterTo + '?' + cid});
-                } else {//否则是文章
-                    switch (cid.toString()) {
-                        case "7": {
-                            cid = "1";
-                            break;
-                        }
-                        case "8": {
-                            cid = "2";
-                            break;
-                        }
-                        case "45": {
-                            cid = "3";
-                            break;
-                        }
-                        case "48": {
-                            cid = "4";
-                            break;
-                        }
-                    }
-                    let routeUrl = this.$router.resolve({
-                        path: this.CmsArticleRouterTo + "?" + cid,
-                    });
-                    window.open(routeUrl.href, '_blank');
-                }
+                this.$router.push({path: '/list' + id});
             },
             goHome() {//返回主页
                 this.navigatorBarPhoneOpen = [];
@@ -323,9 +228,9 @@
 
     .cms-navigation-bar-phone {
         padding: 0.5rem;
-        background: rgba(10, 16, 84,0.8); /* fallback for old browsers */
-        background: -webkit-linear-gradient(to right, rgba(21, 87, 153,0.85), rgba(10, 16, 84,0.9)); /* Chrome 10-25, Safari 5.1-6 */
-        background: linear-gradient(to right, rgba(21, 87, 153,0.85), rgba(10, 16, 84,0.9)); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+        background: rgba(10, 16, 84, 0.8); /* fallback for old browsers */
+        background: -webkit-linear-gradient(to right, rgba(21, 87, 153, 0.85), rgba(10, 16, 84, 0.9)); /* Chrome 10-25, Safari 5.1-6 */
+        background: linear-gradient(to right, rgba(21, 87, 153, 0.85), rgba(10, 16, 84, 0.9)); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
         display: flex;
         justify-content: space-between;
     }

@@ -161,6 +161,27 @@ export default {
         return request(BaseUrl + "/manage/message", "POST",{});
     },
 
+    /**
+     * 获得新闻所有类型
+     * @returns {AxiosPromise}
+     */
+    getNewsTypes(){
+        return request(BaseUrl + "/manage/news/kind", "GET",{});
+    },
+
+    /**
+     * 获得指定类型的新闻列表
+     * @param typeId
+     * @param page
+     * @returns {AxiosPromise}
+     */
+    getNewsByTypeId(typeId,page){
+        let url = "/manage/news/kind/id/page";
+        url = url.replace("id",typeId);
+        url = url.replace("page",page);
+        return request(BaseUrl + url, "GET",{});
+    },
+
     test:() =>{
         return request(BaseUrl+"/manage/user/findPublicList", "GET",{});
     }
