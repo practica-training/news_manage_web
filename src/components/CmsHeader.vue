@@ -76,7 +76,8 @@
                                         <div class="cms-divide-line"></div>
                                         <div class="cms-user-info-tap cms-not-copy" @click="logout">退出登录</div>
                                         <el-button class="cms-userinfo-box" slot="reference" plain>
-                                            <img class="cms-user-avatar" :src="baseURL + userInfo.userAvatar">
+                                            <img v-if="userInfo.userAvatar" class="cms-user-avatar" :src="baseURL + userInfo.userAvatar">
+                                            <img v-else class="cms-user-avatar" src="../static/images/login.png">
                                         </el-button>
                                     </el-popover>
                                     <el-drawer

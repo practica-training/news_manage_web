@@ -124,12 +124,15 @@
                 } else if (value.indexOf("_") != -1 || value.indexOf("/") != -1 || value.indexOf("-") != -1 && value.indexOf(".") != -1) {
                     return callback(new Error('用户名出现非法字符'));
                 } else {//请求服务器是否重复
-                    // this.$API.userCheckUserName(value).then(res => {
-                    //     if(res.data.error != "0"){//注册有错误
-                    //         return callback(new Error(res.data.error_message));
-                    //     }
-                    //     callback();
-                    // });
+                    this.$API.checkUserName(value).then(res => {
+                        if(res.data.success){//可以注册
+                            callback();
+                        }else{
+                            return callback(new Error("用户名已注册"));
+                        }
+                    }).catch(()=>{
+                        return callback(new Error("发生意外错误"));
+                    });
                 }
             };
             let validateUserPassword = (rule, value, callback) => {//检查登录密码
@@ -227,6 +230,9 @@
                 let that = this;
                 this.$refs[formName].validate((valid) => {
                     if (valid) {//检查通过
+                        let loading = this.$loading({
+                            text: "正在登录"
+                        });
                         this.$API.userLogin(name, password).then(function (res) {
                             if (res.data.success) {//登录成功
                                 store.commit("setUserId",res.data.id);
@@ -235,9 +241,12 @@
                                     let userInfo = res.data;
                                     store.commit("setUserInfo",userInfo);
                                     localStorage.setItem("userInfo",JSON.stringify(userInfo));
+                                    loading.close();
+                                    that.$message.success("登录成功");
                                     that.$router.push("/");
                                 });
                             } else {
+                                loading.close();
                                 that.$message.error("用户名或密码错误");
                             }
                         });
@@ -249,9 +258,28 @@
             submitRegister(formName) {//提交注册
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        this.$message.success('submit!!');
+                        if(!this.robotDisabled){//没有做机器验证
+                            this.$message.error("请将滑动条拉至最右端");
+                            return ;
+                        }
+                        let registerData = this.registerData;
+                        let loading = this.$loading({
+                            text: "正在注册"
+                        });
+                        this.$API.userRegister(registerData.userName,registerData.userPassword).then(res => {
+                            if(res.data.success){
+                                loading.close();
+                                this.$message.success('注册成功');
+                                this.cancelRegister();//关闭注册窗口
+                            }else{
+                                loading.close();
+                                this.$message.error('发生意外错误，请重试');
+                            }
+                        }).catch(()=>{
+                            loading.close();
+                            this.$message.error('发生意外错误，请重试');
+                        })
                     } else {
-                        this.$message.error('error submit!!');
                         return false;
                     }
                 });

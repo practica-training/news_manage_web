@@ -2,7 +2,8 @@
     <div class="user-info-box">
         <div class="user-info-tab">
             <div class="user-info-avatar-box">
-                <img :src="BaseUrl + updateUserInfo.userAvatar" @click="clickAvatar">
+                <img v-if="updateUserInfo.userAvatar" :src="BaseUrl + updateUserInfo.userAvatar" @click="clickAvatar">
+                <img v-else class="cms-user-avatar" src="../static/images/login.png" @click="clickAvatar">
             </div>
             <input type="file" id="uploadImg" style="display: none;" ref="uploadImg" accept=".png,.jpg,.jpeg"
                    multiple="multiple" @change="uploadAvatar"/>

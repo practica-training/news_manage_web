@@ -44,7 +44,10 @@
         methods: {
             lookArticle(articleId) {
                 let routeUrl = this.$router.resolve({
-                    path: "/article?" + articleId,
+                    path: "/article",
+                    query:{
+                        id:articleId
+                    }
                 });
                 window.open(routeUrl.href, '_blank');
             }
