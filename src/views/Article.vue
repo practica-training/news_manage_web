@@ -4,7 +4,7 @@
         <el-col :md="3" :sm="4" class="hidden-xs-only"></el-col>
         <el-col :md="16" :sm="19" :xs="24">
             <!--            有文章内容时-->
-            <div v-if="articleInfo">
+            <div v-if="articleInfo.newsTitle">
                 <!--                返回按钮-->
                 <el-card class="hidden-xs-only" style="border: none;background-color: #f0f0f0;padding: 0;">
                     <div class="cms-article-header cms-not-copy">
@@ -31,6 +31,8 @@
                             <i class="el-icon-time"></i>{{articleInfo.publishTime}}
                             &nbsp;&nbsp;
                             <i class="el-icon-view">{{articleInfo.readNumber}}</i>
+                            &nbsp;&nbsp;
+                            <i class="el-icon-warning cms-cursor" @click="showReportNews">举报</i>
                         </div>
                         <div id="article" class="cms-article-info" v-html="articleInfo.content"></div>
                     </div>
@@ -47,7 +49,8 @@
                         <news-comment :show-drawer="showCommentDrawer"></news-comment>
                     </div>
                     <!--                    评论列表-->
-                    <news-show-comment :comments="newsComments"></news-show-comment>
+                    <news-show-comment :news-id="articleInfo.newsid" :comments="newsComments" @cancelSubmitContent="cancel" @submitContent="submit"></news-show-comment>
+                    <news-comment :show-drawer="showReportNewsDrawer" :title="'举报新闻'" :placeholder="'请输入举报原因'" :cancel-info="'是否取消举报'" @cancelSubmitContent="cancelReport" @submitContent="submitReport"></news-comment>
                 </el-card>
             </div>
             <!--            没有文章时-->
@@ -95,7 +98,8 @@
                 priviewUrl: "",    //预览图片地址,
                 imgList: [],
                 showCommentDrawer: false,//是否显示评论的抽屉
-                newsComments: [],//评论列表
+                newsComments: [],//评论列表,
+                showReportNewsDrawer:false,
             }
         },
         methods: {
@@ -152,6 +156,16 @@
                     this.$router.push({path: '/list?' + this.currCid});
                 }
             },
+            showReportNews(){//显示举报新闻抽屉
+                this.showReportNewsDrawer = true;
+            },
+            cancelReport(){
+                this.showReportNewsDrawer = false;
+            },
+            submitReport(content){
+                this.showReportNewsDrawer = false;
+                window.console.log(content)
+            },
             toTop() {//返回顶部
                 let x = document.body.scrollTop || document.documentElement.scrollTop;
                 let timer = setInterval(function () {
@@ -182,6 +196,12 @@
             toClose() {//关闭页面
                 window.location.href = "about:blank";
                 window.close();
+            },
+            cancel(){
+                window.console.log("取消评论")
+            },
+            submit(comment){
+                window.console.log("提交评论 " + comment)
             },
         },
         async created() {

@@ -18,6 +18,10 @@
         display: none;
     }
 
+    .cms-cursor{
+        cursor: pointer;
+    }
+
     ::-webkit-scrollbar {
         width: 5px; /*对垂直流动条有效*/
         height: 5px; /*对水平流动条有效*/
@@ -161,5 +165,9 @@
     .user-info-title .el-form-item__label{
         font-size: 1.1rem;
         color: #475669;
+    }
+
+    .el-tabs__content{
+        overflow-y: scroll !important;
     }
 </style>

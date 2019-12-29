@@ -11,6 +11,9 @@
             <img id="preViewImg" @click="$imageViewer" style="display: none;" ref="preViewImg"/>
             <!--                预览大图的img-->
         </div>
+        <div v-if="IsOtherUserInfo" class="user-info-tab">
+            <el-button type="danger" size="mini" @click="showReport">举报</el-button>
+        </div>
         <div class="user-info-tab">
             <el-form class="cms-not-copy" label-position="right" :label-width="IsOtherUserInfo?'100px':'180px'"
                      :model="updateUserInfo">
@@ -204,6 +207,8 @@
                 </el-form>
             </el-dialog>
             <!--            修改密码-->
+
+            <news-comment :title="'举报用户'" :show-drawer="showReportDrawer" :placeholder="'请输入举报原因'" :cancel-info="'是否取消举报'" @cancelSubmitContent="cancelReport" @submitContent="submitReport"></news-comment>
         </div>
     </div>
 </template>
@@ -211,7 +216,7 @@
 <script>
     import {Form, FormItem, Input, Button, Select, Option, Dialog} from "element-ui"
     import store from "../store";
-
+    import NewsComment from "./NewsComment";
     export default {
         name: "UserInfo",
         props: {
@@ -227,6 +232,7 @@
             }
         },
         components: {
+            NewsComment,
             [Form.name]: Form,
             [FormItem.name]: FormItem,
             [Input.name]: Input,
@@ -260,6 +266,7 @@
                 verifiedUrl: "",//身份证图片
                 realName: "",//真实姓名
                 idCard: "",//身份证号码
+                showReportDrawer:false,
             }
         },
         methods: {
@@ -614,7 +621,20 @@
                     this.idCard = "";
                     this.showCertifiedDialog = false;
                 }
-            }
+            },
+
+            showReport(){
+                this.showReportDrawer = true;
+            },
+
+            cancelReport(){
+                this.showReportDrawer = false;
+            },
+
+            submitReport(content){
+                this.showReportDrawer = false;
+                window.console.log(content)
+            },
         },
         created() {
             this.updateUserInfo = JSON.parse(JSON.stringify(this.UserInfo));

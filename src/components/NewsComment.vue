@@ -22,7 +22,7 @@
             <el-col :span="24" class="cms-flex-box cms-margin-small">
                 <el-col class="flex-end" :xl="12" :lg="14" :md="18" :sm="20" :xs="22">
                     <el-button type="primary" @click="resetContent">清空内容</el-button>
-                    <el-button type="success" @click="submitContent">提交评论</el-button>
+                    <el-button type="success" @click="submitContent">提交</el-button>
                 </el-col>
             </el-col>
         </div>
@@ -46,6 +46,10 @@
             Placeholder: {//placeholder内容，默认是评论
                 type: String,
                 default: "请输入评论内容",
+            },
+            CancelInfo:{
+                type:String,
+                default:"是否要取消评论？"
             }
         },
         components: {
@@ -62,7 +66,7 @@
         },
         methods: {
             handleClose(done) {
-                this.$confirm('是否要取消评论？')
+                this.$confirm(this.CancelInfo)
                     .then(_ => {
                         done();
                         this.content = "";

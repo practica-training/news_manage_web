@@ -57,9 +57,9 @@ export default {
      * 获取用户信息
      * @returns {AxiosPromise}
      */
-    getUserInfo: () => {
-        window.console.log(store.state.userId);
-        return request(BaseUrl + "/manage/user/id/" + store.state.userId, "GET", {});
+    getUserInfo: (userId = "") => {
+        let id = userId ? userId : store.state.userId;
+        return request(BaseUrl + "/manage/user/id/" + id, "GET", {});
     },
 
     /**
