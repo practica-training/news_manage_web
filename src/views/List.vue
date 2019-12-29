@@ -68,7 +68,7 @@
             },
             initTableData(page) {
                 this.$API.getNewsByTypeId(this.columns,page).then(res => {
-                    window,console.log(res.data);
+                    window.console.log(res.data);
                     if(res.data.success){
                         this.cmsTableData = res.data.queryResult.list;//列表数据
                         this.totalElements = res.data.queryResult.total;
@@ -79,7 +79,7 @@
 
             },
             currentChange(currPage) {
-                this.initTableData(currPage - 1);
+                this.initTableData(currPage);
             }
         },
         computed: {

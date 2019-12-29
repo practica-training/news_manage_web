@@ -13,7 +13,7 @@
                     </el-table-column>
                     <el-table-column align="right">
                         <template slot-scope="scope">
-                            <span>{{scope.row.createTime}}&nbsp;</span>
+                            <span>{{scope.row.publishTime.slice(0,scope.row.publishTime.indexOf("日") + 1)}}&nbsp;</span>
                             <i class="el-icon-arrow-right"></i>
                         </template>
                     </el-table-column>
@@ -60,23 +60,12 @@
             formatTitle(row) {
                 return row.newsTitle;
             },
-            // content: "阿填6杀了！"
-            // createTime: 1247673600000
-            // failureReason: null
-            // id: "8a8180846eafdb1e016eafdc48240024"
-            // likeNumber: 400
-            // newsAvatar: null
-            // newsState: 1
-            // newsTitle: "王者荣耀"
-            // newsWeights: null
-            // publishTime: 1577238131000
-            // readNumber: 600
             lookArticle(row) {
-                this.$router.push({path: '/article?' + row.articleId});
-                // let routeUrl = this.$router.resolve({
-                //     path: "/article?" + row.articleId,
-                // });
-                // window.open(routeUrl.href);
+                let routeUrl = this.$router.resolve({
+                    path: "/article",
+                    query: {id: row.newsId}
+                });
+                window.open(routeUrl.href);
             }
         },
         created() {

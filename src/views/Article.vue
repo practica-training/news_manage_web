@@ -1,10 +1,10 @@
 <template>
     <!--    文章-->
-    <el-row class="cms-article-box" :style="articleInfo.articleContent?'':'background-color: initial !important;'">
+    <el-row class="cms-article-box" :style="articleInfo?'':'background-color: initial !important;'">
         <el-col :md="3" :sm="4" class="hidden-xs-only"></el-col>
         <el-col :md="16" :sm="19" :xs="24">
             <!--            有文章内容时-->
-            <div v-if="articleInfo.articleContent">
+            <div v-if="articleInfo">
                 <!--                返回按钮-->
                 <el-card class="hidden-xs-only" style="border: none;background-color: #f0f0f0;padding: 0;">
                     <div class="cms-article-header cms-not-copy">
@@ -19,15 +19,20 @@
                 <el-card class="cms-article-info-box cms-article-box-shadow" style="border: none;">
                     <!--                文章主体-->
                     <div id="cmsArticle">
-                        <div class="cms-article-title">{{articleInfo.articleView.title}}</div>
+                        <div class="cms-article-title">{{articleInfo.newsTitle}}</div>
                         <div class="cms-article-title-e">
-                            <i class="el-icon-collection-tag"></i>{{articleInfo.articleView.columns.columnName}}
+                            <i class="el-icon-collection-tag"></i>
+                            <template v-for="(item,index) in articleInfo.newsTypeSet">
+                                <span v-if="index != 0"></span>
+                                <span :key="item.id">{{item.name}}</span>
+                            </template>
+<!--                            {{articleInfo.likeNumber}}-->
                             &nbsp;&nbsp;
-                            <i class="el-icon-time"></i>{{articleInfo.articleView.createTime.split(' ')[0]}}
+                            <i class="el-icon-time"></i>{{articleInfo.publishTime}}
                             &nbsp;&nbsp;
-                            <i class="el-icon-view">{{articleInfo.readNum}}</i>
+                            <i class="el-icon-view">{{articleInfo.readNumber}}</i>
                         </div>
-                        <div id="article" class="cms-article-info" v-html="articleInfo.articleContent"></div>
+                        <div id="article" class="cms-article-info" v-html="articleInfo.content"></div>
                     </div>
                 </el-card>
                 <div class="cms-wall"></div>
@@ -36,7 +41,9 @@
                     <div class="cms-article-header cms-not-copy" slot="header" style="position: relative;">
                         <div class="cms-comment-title">评论</div>
                         <!--                评论按钮-->
-                        <el-button size="mini" class="cms-comment-button" type="default" plain round @click="showCommentDrawer=true">参与评论</el-button>
+                        <el-button size="mini" class="cms-comment-button" type="default" plain round
+                                   @click="showCommentDrawer=true">参与评论
+                        </el-button>
                         <news-comment :show-drawer="showCommentDrawer"></news-comment>
                     </div>
                     <!--                    评论列表-->
@@ -66,7 +73,6 @@
 </template>
 
 <script>
-    import CmsSideBar from "../components/CmsSideBar"
     import NewsComment from "../components/NewsComment";
     import NewsShowComment from "../components/NewsShowComment";
     import store from "../store"
@@ -77,58 +83,35 @@
         name: "Article",
         store,
         components: {
-            CmsSideBar,
             NewsComment,
             NewsShowComment
         },
         data() {
             return {
                 loadingInstance: "",
-                articleInfo: {
-                    articleContent: "",
-                    articleView: {
-                        createTime: "",
-                        columns: {
-                            columnName: "",
-                        }
-                    }
-                },
-                num: 1000,         //阅读数
-                parentColumn: [], //父栏目
-                currCid: "",      //当前栏目cid
+                articleInfo: {},
                 qrCode: null,     //文章底部的二维码
                 qrCode2: null,    //工具栏的二维码
                 priviewUrl: "",    //预览图片地址,
                 imgList: [],
-
                 showCommentDrawer: false,//是否显示评论的抽屉
-                newsComments:[],//评论列表
+                newsComments: [],//评论列表
             }
         },
         methods: {
             checkUrl() {
                 //得到请求的参数
-                let tempJson = this.$route.query;
-                //遍历得到要获取的columns
-                let articleId = "";
-                for (let key in tempJson) {
-                    if (key) {
-                        articleId = key;
-                        break;
-                    }
-                }
-                return articleId;
+                return this.$route.query.id;
             },
             async init() {//初始化columns
-                let articleId = this.checkUrl();//得到栏目
-                if (articleId) {//如果有,则赋值
-                    let $url = this.$cmsInterface.DgutGetArticleInfo.url.replace("$articleId", articleId);
-                    await this.$Get($url).then(res => {
-                        if (res.code == 0) {
-                            this.articleInfo = res.data;
-                            this.parentColumn = store.state.cmsColumns;
-                            this.currCid = "" + this.articleInfo.column.cid;
-                            this.formatArticle();
+                let newsId = this.checkUrl();//得到栏目
+                if (newsId) {//如果有,则赋值
+                    await this.$API.getNewsByNewsId(newsId).then(res => {
+                        window.console.log(res)
+                        if (res.data.success) {
+                            this.articleInfo = res.data.newsDTO;
+                            window.console.log(this.articleInfo)
+                            //this.formatArticle();
                         } else {//否则没有文章
                         }
                     })
@@ -136,31 +119,31 @@
                     this.$router.push({path: '/'});
                 }
             },
-            formatArticle() {//对文章格式化
-                let article = this.articleInfo.articleContent;
-                let cmsHost = this.$cmsInterface.DgutCMSHost;
-
-                //清除掉多余的转行
-                article = article.replace(/<br>/g, "");
-                article = article.replace(/<br\/>/g, "");
-
-                //给图片添加样式
-                article = article.replace(/<img/g, "<img @click='clickImg($event)' class='cms-article-img'");
-
-                //给p添加样式
-                article = article.replace(/<p/g, "<p class='cms-article-p' ");
-
-                //给span添加样式
-                article = article.replace(/<span/g, "<span class='cms-article-span' ");
-
-                //修正href链接
-                article = article.replace(/href="\//g, "href=\"" + cmsHost + "/");
-
-                //修正src链接
-                article = article.replace(/src="\//g, "src=\"" + cmsHost + "/");
-
-                this.articleInfo.articleContent = article;
-            },
+            // formatArticle() {//对文章格式化
+            //     let article = this.articleInfo.articleContent;
+            //     let cmsHost = this.$cmsInterface.DgutCMSHost;
+            //
+            //     //清除掉多余的转行
+            //     article = article.replace(/<br>/g, "");
+            //     article = article.replace(/<br\/>/g, "");
+            //
+            //     //给图片添加样式
+            //     article = article.replace(/<img/g, "<img @click='clickImg($event)' class='cms-article-img'");
+            //
+            //     //给p添加样式
+            //     article = article.replace(/<p/g, "<p class='cms-article-p' ");
+            //
+            //     //给span添加样式
+            //     article = article.replace(/<span/g, "<span class='cms-article-span' ");
+            //
+            //     //修正href链接
+            //     article = article.replace(/href="\//g, "href=\"" + cmsHost + "/");
+            //
+            //     //修正src链接
+            //     article = article.replace(/src="\//g, "src=\"" + cmsHost + "/");
+            //
+            //     this.articleInfo.articleContent = article;
+            // },
             backToLastPage() {//返回上一页
                 //如果有上一页,则直接返回
                 if (window.history.length > 1) {
@@ -230,7 +213,7 @@
 </script>
 
 <style>
-    .cms-wall{
+    .cms-wall {
         height: 1.5rem;
     }
 
@@ -270,13 +253,13 @@
         color: #0a1054;
     }
 
-    .cms-comment-title{
+    .cms-comment-title {
         font-size: 1.1rem;
         text-align: center;
         color: #0a1054;
     }
 
-    .cms-comment-button{
+    .cms-comment-button {
         position: absolute;
         right: 0.5rem;
         font-size: 0.8rem;

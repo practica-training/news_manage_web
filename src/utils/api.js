@@ -3,6 +3,7 @@ import store from '../store'
 
 //let BaseUrl = "http://10.60.9.86:8888";
 let BaseUrl = "http://zzhong.wang:8888";
+//let BaseUrl = "http://10.62.120.80:8888";
 
 // 创建axios实例
 const Request = axios.create({
