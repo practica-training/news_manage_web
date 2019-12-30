@@ -81,7 +81,6 @@
         },
         methods:{
             deleteMessage(index,id){
-                window.console.log(index,id);
                 if(index == 0){
                     this.messages = this.messages.slice(1,this.messages.length);
                 }else{
@@ -93,6 +92,14 @@
                 window.console.log(id)
             }
         },
+        created() {
+            this.$API.getUserMessages().then(res => {
+                window.console.log(res.data);
+                if(res.data.success){
+                    this.messages = res.data.list;
+                }
+            })
+        }
     }
 </script>
 

@@ -39,7 +39,7 @@
 
                             <template v-for="(item,index) in CmsColumns">
                                 <el-menu-item :index="index.toString()" :key="item.id"
-                                              @click="routerTo(item.id)">
+                                              @click="routerTo(item.id,item.name)">
                                     <span slot="title">{{item.name}}</span>
                                 </el-menu-item>
                             </template>
@@ -106,10 +106,15 @@
             },
         },
         methods: {
-            routerTo(id) {//路由跳转,参数:cid(选中的cid),isList(是否是list),parentCid(父节点的cid)
+            routerTo(id, name) {//路由跳转,参数:cid(选中的cid),isList(是否是list),parentCid(父节点的cid)
                 this.navigatorBarPhoneOpen = [];
                 this.isShow = false;
-                this.$router.push({path: '/list' + id});
+                this.$router.push({
+                    path: '/list', query: {
+                        id: id,
+                        name: name
+                    }
+                });
             },
             goHome() {//返回主页
                 this.navigatorBarPhoneOpen = [];

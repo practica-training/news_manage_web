@@ -3,7 +3,7 @@
         <at-menu-item @click.native="goHome">首页</at-menu-item>
         <template v-for="(item,index) in CmsColumns">
             <at-menu-item :name="(index+1).toString()" :key="item.id"
-                          @click.native="routerTo(item.id)">
+                          @click.native="routerTo(item.id,item.name)">
                 <span class="cms-router-link cms-router-link-name" style="padding: 0;">
                     {{item.name}}
                 </span>
@@ -43,8 +43,8 @@
             },
         },
         methods: {
-            routerTo(id) {//路由跳转,参数:cid(选中的cid),isList(是否是list),parentCid(父节点的cid)
-                this.$router.push({path: '/list',query:{id:id}});
+            routerTo(id,name) {//路由跳转,参数:cid(选中的cid),isList(是否是list),parentCid(父节点的cid)
+                this.$router.push({path: '/list',query:{id:id,name:name}});
             },
             goHome() {//返回主页
                 this.$router.push({path: '/'});

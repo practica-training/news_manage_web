@@ -3,7 +3,7 @@
     <div>
         <el-card>
             <div slot="header" class="cms-not-copy cms-table-header">
-                <span class="cms-not-copy cms-table-title" v-show="tapTitle"><i class="el-icon-collection-tag"></i>&nbsp;{{tapTitle}}</span>
+                <span class="cms-not-copy cms-table-title" v-show="TapTitle"><i class="el-icon-collection-tag"></i>&nbsp;{{TapTitle}}新闻</span>
             </div>
             <keep-alive>
                 <el-table row-class-name="cms-table-line" class="cms-select-news cms-not-copy" stripe
@@ -29,14 +29,16 @@
         data() {
             return {
                 loadingInstance: "",
-                newsList: [],
-                tapTitle: "",
+                newsList: []
             }
         },
         props: {
             TableData: {
                 type: Array,
-            }
+            },
+            TapTitle:{
+                type: String,
+            },
         },
         watch: {
             '$route'() {
@@ -44,11 +46,6 @@
             },
             TableData(newVal) {
                 this.newsList = newVal;
-                if (this.newsList.length > 0) {
-                    this.tapTitle = "aaa";
-                } else {
-                    this.tapTitle = "当前栏目暂无数据";
-                }
                 this.$nextTick(() => {// 以服务的方式调用的 Loading 需要异步关闭
                     setTimeout(() => {//设置定时器，为了看上去不像闪屏
                         this.loadingInstance.close();

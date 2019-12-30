@@ -57,7 +57,7 @@
                                 background
                                 layout="prev, pager, next, total"
                                 :hide-on-single-page="true"
-                                :total="totalElements" @size-change="sizeChange" @current-change="currentChange">
+                                :total="totalComment" @size-change="sizeChange" @current-change="currentChange">
                         </el-pagination>
                     </div>
                 </el-card>
@@ -90,13 +90,15 @@
     import store from "../store"
     import QRCode from 'qrcodejs2' //生成二维码
     import Vue from 'vue/dist/vue.js'
+    import {Pagination} from "element-ui"
 
     export default {
         name: "Article",
         store,
         components: {
             NewsComment,
-            NewsShowComment
+            NewsShowComment,
+            [Pagination.name]:Pagination
         },
         data() {
             return {
@@ -120,23 +122,25 @@
             async init() {//初始化columns
                 let newsId = this.checkUrl();//得到栏目
                 if (newsId) {//如果有,则赋值
-                    await this.$API.getNewsByNewsId(newsId).then(res => {
-                        window.console.log(res)
+                    this.$API.getNewsByNewsId(newsId).then(res => {
                         if (res.data.success) {
                             this.articleInfo = res.data.newsDTO;
-                            window.console.log(this.articleInfo)
                             //this.formatArticle();
                         } else {//否则没有文章
                         }
                     })
+                    this.initComment(1);
                 } else {//没有则跳转回主页
                     this.$router.push({path: '/'});
                 }
             },
             initComment(page){//初始化评论
-                let newsId = this.checkUrl();//得到栏目
+                let newsId = this.checkUrl();//得到id
                 this.$API.getCommentsByNewsId(newsId,page).then(res=>{
-                    window.console.log(res)
+                    if(res.data.success){
+                        this.newsComments = res.data.queryResult.list;
+                        this.totalComment = res.data.total;
+                    }
                 })
             },
             sizeChange() {
@@ -184,9 +188,20 @@
             cancelReport(){
                 this.showReportNewsDrawer = false;
             },
+            //提交举报
             submitReport(content){
                 this.showReportNewsDrawer = false;
-                window.console.log(content)
+                let loading = this.$loading({
+                    text: "正在提交"
+                });
+                this.$API.reportNews(this.articleInfo.id,content).then(res => {
+                    loading.close();
+                    if(res.data.success){
+                        this.$message.success("已提交举报，感谢您为净化网络环境做贡献");
+                    }else{
+                        this.$message.success("发生错误，举报失败");
+                    }
+                })
             },
             toTop() {//返回顶部
                 let x = document.body.scrollTop || document.documentElement.scrollTop;
@@ -224,6 +239,17 @@
             },
             submit(comment){
                 window.console.log("提交评论 " + comment)
+                // let loading = this.$loading({
+                //     text: "正在提交"
+                // });
+                // this.$API.reportNews(this.articleInfo.id,content).then(res => {
+                //     loading.close();
+                //     if(res.data.success){
+                //         this.$message.success("已提交举报，感谢您为净化网络环境做贡献");
+                //     }else{
+                //         this.$message.success("发生错误，举报失败");
+                //     }
+                // })
             },
         },
         async created() {

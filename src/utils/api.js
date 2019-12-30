@@ -1,8 +1,8 @@
 import axios from 'axios';
 import store from '../store'
 
-//let BaseUrl = "http://10.60.9.86:8888";
-let BaseUrl = "http://zzhong.wang:8888";
+let BaseUrl = "http://10.60.9.86:8888";
+//let BaseUrl = "http://zzhong.wang:8888";
 //let BaseUrl = "http://10.62.120.80:8888";
 
 // 创建axios实例
@@ -109,8 +109,8 @@ export default {
         formData.append('realName', verifiedInfo.realName);//通过append向form对象添加数据
         formData.append('idCard', verifiedInfo.idCard);//通过append向form对象添加数据
         formData.append('photo', verifiedInfo.photo);//通过append向form对象添加数据
-        formData.append('userid', store.state.userId);//通过append向form对象添加数据
-        return request(BaseUrl + "/manage/userVerified", "POST", verifiedInfo);
+        window.console.log(formData)
+        return request(BaseUrl + "/manage/userVerified/userId/" + store.state.userId, "PUT", verifiedInfo);
     },
 
     /**
@@ -152,7 +152,7 @@ export default {
      * 获得用户消息列表
      */
     getUserMessages() {
-        return request(BaseUrl + "/manage/message/getUserMessage/id/" + store.state.userId, "GET", {});
+        return request(BaseUrl + "/manage/message/getUserMessage/" + store.state.userId, "GET", {});
     },
 
     /**
@@ -161,7 +161,7 @@ export default {
      * @returns {AxiosPromise}
      */
     getMessageInfo(id) {
-        return request(BaseUrl + "/manage/message/getMessage/id/" + id, "GET", {});
+        return request(BaseUrl + "/manage/message/getMessage/" + id, "GET", {});
     },
 
     /**
@@ -220,6 +220,50 @@ export default {
         url = url.replace("{newsid}", newsId);
         url = url.replace("{page}", page);
         return request(BaseUrl + url, "GET", {});
+    },
+
+    submitComment(){
+
+    },
+
+    /**
+     * 申请成为新闻发布者
+     * @param reason
+     * @returns {AxiosPromise}
+     */
+    applicateNewsPublisher(reason){
+        return request(BaseUrl + "/manage/UserApplyToNewsMaker", "POST", {
+            userId:store.state.userId,
+            reason:reason
+        });
+    },
+
+    /**
+     * 举报用户
+     * @param userId
+     * @param reason
+     * @returns {AxiosPromise}
+     */
+    reportUser(userId,reason){
+        return request(BaseUrl + "/manage/userReport", "POST", {
+            userId:store.state.userId,
+            reportedId:userId,
+            reportReason:reason
+        });
+    },
+
+    /**
+     * 举报新闻
+     * @param userId
+     * @param reason
+     * @returns {AxiosPromise}
+     */
+    reportNews(newsId,reason){
+        return request(BaseUrl + "/manage/newsReport", "POST", {
+            userId:store.state.userId,
+            newsId:newsId,
+            reportReason:reason
+        });
     },
 
     test: () => {

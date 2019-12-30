@@ -49,7 +49,7 @@
                         </el-button>
                     </div>
                     <div v-else>
-                        <el-button type="danger" size="mini" @click="showAddPhoneDialog = true">绑定手机</el-button>
+                        <el-button type="danger" size="mini" @click="showUpdatePhoneDialog = true">绑定手机</el-button>
                     </div>
                 </el-form-item>
                 <el-form-item v-if="!IsOtherUserInfo" label="密码" class="user-info-title">
@@ -78,7 +78,8 @@
                 <el-form-item>
                 </el-form-item>
                 <el-form-item v-if="!IsOtherUserInfo">
-                    <el-button v-if="UserInfo.userState != 2" v-show="!isUpdate" style="float: left;" type="danger" plain round @click="showApplication">申请成为新闻发布者
+                    <el-button v-if="UserInfo.userState != 2" v-show="!isUpdate" style="float: left;" type="danger"
+                               plain round @click="showApplication">申请成为新闻发布者
                     </el-button>
                     <el-button v-show="!isUpdate" style="float: right;" plain round @click="isUpdate = true">修改资料
                     </el-button>
@@ -180,8 +181,8 @@
                             </el-form-item>
                         </template>
 
-                        <template v-if="verifiedInfo.reviewState == 0 || verifiedInfo.reviewState == 1">
-                            <div class="cms-verified-other-info">{{verifiedInfo.reviewState == 0 ? "等待审核":"已审核"}}</div>
+                        <template v-if="verifiedInfo.id">
+                            <div class="cms-verified-other-info">{{verifiedInfo.reviewState == 1 ?"已审核":"等待审核"}}</div>
                         </template>
 
                         <template v-if="verifiedInfo.verifiedTime">
@@ -189,18 +190,25 @@
                         </template>
 
                         <template v-if="verifiedInfo.failureReason">
-                            <div class="cms-verified-other-info cms-verified-other-info-red">{{verifiedInfo.failureReason}}</div>
+                            <div class="cms-verified-other-info cms-verified-other-info-red">
+                                {{verifiedInfo.failureReason}}
+                            </div>
                         </template>
                     </div>
-                    <div class="cms-verified" style="padding: 0 3rem;margin: 1rem;">
+                    <div v-if="!IsOtherUserInfo" class="cms-verified" style="padding: 0 3rem;margin: 1rem;">
                         <div style="display: flex;justify-content: space-around;">
-                            <el-button v-if="verifiedInfo.reviewState != 0 && verifiedInfo.reviewState != 1" type="warning" round @click="updateVerifiedInfo(false)">
+                            <el-button
+                                    v-if="(verifiedInfo.reviewState == null) || verifiedInfo.reviewState != 0 && verifiedInfo.reviewState != 1"
+                                    type="warning" round @click="updateVerifiedInfo(false)">
                                 取消
                             </el-button>
-                            <el-button v-if="verifiedInfo.reviewState != 0 && verifiedInfo.reviewState != 1" type="success" round @click="updateVerifiedInfo(true)">
+                            <el-button
+                                    v-if="(verifiedInfo.reviewState == null) || verifiedInfo.reviewState != 0 && verifiedInfo.reviewState != 1"
+                                    type="success" round @click="updateVerifiedInfo(true)">
                                 提交
                             </el-button>
-                            <el-button v-if="verifiedInfo.reviewState != -1" type="danger"
+                            <el-button v-if="verifiedInfo.reviewState != null && verifiedInfo.reviewState != -1"
+                                       type="danger"
                                        round @click="updateVerifiedInfo(false)">
                                 关闭
                             </el-button>
@@ -210,9 +218,13 @@
             </el-dialog>
             <!--            修改密码-->
 
-            <news-comment :title="'举报用户'" :show-drawer="showReportDrawer" :placeholder="'请输入举报原因'" :cancel-info="'是否取消举报'" @cancelSubmitContent="cancelReport" @submitContent="submitReport"></news-comment>
+            <news-comment :title="'举报用户'" :show-drawer="showReportDrawer" :placeholder="'请输入举报原因'"
+                          :cancel-info="'是否取消举报'" @cancelSubmitContent="cancelReport"
+                          @submitContent="submitReport"></news-comment>
 
-            <news-comment :title="'申请成为新闻发布者'" :show-drawer="showApplicationDrawer" :placeholder="'请输入申请理由'" :cancel-info="'是否取消申请'" @cancelSubmitContent="cancelApplication" @submitContent="submitApplication"></news-comment>
+            <news-comment :title="'申请成为新闻发布者'" :show-drawer="showApplicationDrawer" :placeholder="'请输入申请理由'"
+                          :cancel-info="'是否取消申请'" @cancelSubmitContent="cancelApplication"
+                          @submitContent="submitApplication"></news-comment>
         </div>
     </div>
 </template>
@@ -221,6 +233,7 @@
     import {Form, FormItem, Input, Button, Select, Option, Dialog} from "element-ui"
     import store from "../store";
     import NewsComment from "./NewsComment";
+
     export default {
         name: "UserInfo",
         props: {
@@ -270,8 +283,8 @@
                 verifiedUrl: "",//身份证图片
                 realName: "",//真实姓名
                 idCard: "",//身份证号码
-                showReportDrawer:false,
-                showApplicationDrawer:false
+                showReportDrawer: false,
+                showApplicationDrawer: false
             }
         },
         methods: {
@@ -520,16 +533,18 @@
             //显示实名认证窗口
             showVerifiedInfo() {
                 this.showCertifiedDialog = true;
-                if (this.verifiedInfo.photo && this.verifiedInfo.realName && this.verifiedInfo.idCard){
-                    return;
-                } else if (store.state.verifiedInfo) {
-                    this.verifiedInfo = store.state.verifiedInfo;
-                } else {
-                    this.$API.getVerifiedInfo().then(res => {
-                        window.console.log(res);
-                    })
-                }
-                window.console.log(this.verifiedInfo)
+                let loading = this.$loading();
+                this.$API.getVerifiedInfo().then(res => {
+                    loading.close();
+                    window.console.log(res)
+                    if (res.data.success) {
+                        window.console.log(res.data)
+                    } else {
+                        this.verifiedInfo = {};
+                    }
+                }).catch(()=>{
+                    loading.close();
+                })
             },
 
             //点击实名认证的图片
@@ -604,7 +619,6 @@
                         if (res.data.success) {
                             this.$message.success("提交成功");
                             this.verifiedInfo = res.data.userVerified;
-                            store.commit("setVerifiedInfo", verifiedInfo);
                         } else {
                             this.$message.error("提交失败");
                         }
@@ -629,14 +643,14 @@
             },
 
             //显示申请成为新闻发布者
-            showApplication(){
+            showApplication() {
                 //如果没绑定手机
-                if(!this.UserInfo.userPhone){
+                if (!this.UserInfo.userPhone) {
                     this.$message.error("请先绑定手机号");
                     return;
                 }
                 //如果没实名认证
-                if(this.UserInfo.isCertified == 0){
+                if (this.UserInfo.isCertified == 0) {
                     this.$message.error("请先实名认证");
                     return;
                 }
@@ -644,30 +658,50 @@
             },
 
             //取消申请
-            cancelApplication(){
+            cancelApplication() {
                 this.showApplicationDrawer = false;
             },
 
             //提交申请
-            submitApplication(content){
-                window.console.log(content);
+            submitApplication(content) {
+                let loading = this.$loading({
+                    text: "正在提交"
+                });
+                this.$API.applicateNewsPublisher(content).then(res => {
+                    loading.close();
+                    if (res.data.success) {
+                        this.$message.success("提交成功");
+                    } else {
+                        this.$message.success("提交失败，请重新提交");
+                    }
+                });
                 this.showApplicationDrawer = false;
             },
 
             //显示举报
-            showReport(){
+            showReport() {
                 this.showReportDrawer = true;
             },
 
             //取消举报
-            cancelReport(){
+            cancelReport() {
                 this.showReportDrawer = false;
             },
 
             //确认举报
-            submitReport(content){
+            submitReport(content) {
                 this.showReportDrawer = false;
-                window.console.log(content)
+                let loading = this.$loading({
+                    text: "正在提交"
+                });
+                this.$API.reportUser(this.UserInfo.id, content).then(res => {
+                    loading.close();
+                    if (res.data.success) {
+                        this.$message.success("已提交举报，感谢您为净化网络环境做贡献");
+                    } else {
+                        this.$message.success("发生错误，举报失败");
+                    }
+                })
             },
         },
         created() {
@@ -793,7 +827,7 @@
         color: #475669;
     }
 
-    .cms-verified-other-info{
+    .cms-verified-other-info {
         padding: 0 3rem;
         font-size: 0.8rem;
         color: #1d6296;
@@ -801,7 +835,7 @@
         margin: 0.5rem;
     }
 
-    .cms-verified-other-info-red{
+    .cms-verified-other-info-red {
         color: indianred;
     }
 </style>

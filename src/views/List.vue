@@ -4,7 +4,7 @@
         <el-col class="cms-list-view" :span="24">
             <el-col :xl="{span:20}" :lg="{span:20}" :md="{span:19}" :sm="{span:19}">
                 <!--                列表组件，根据不同类型应用不同的列表组件-->
-                <cms-default-list :table-data="cmsTableData"></cms-default-list>
+                <cms-default-list :table-data="cmsTableData" :tap-title="tapTitle"></cms-default-list>
                 <div v-show="paginationShow" style="display: flex;justify-content: center;padding: 2rem;">
                     <el-pagination
                             :current-page="1"
@@ -39,6 +39,7 @@
                 specialListId: "",//特殊组件的id，0是教学大纲,1人才培养方案
                 paginationShow: true,//是否显示分页组件
                 totalElements: 0,//列表数据的总数量
+                tapTitle:"",
             }
         },
         components: {
@@ -51,14 +52,12 @@
             }
         },
         methods: {
-            checkUrl() {
-                //得到请求的参数
-                return this.$route.query.id;
-            },
             initColumns() {//初始化columns
-                let columns = this.checkUrl();//得到栏目
-                if (columns) {//如果有,则赋值
+                let columns = this.$route.query.id;//得到id
+                let name = this.$route.query.name;//得到id
+                if (columns && name) {//如果有,则赋值
                     this.columns = columns;
+                    this.tapTitle = name;
                     this.componentName = "CmsDefaultList";
                     this.isSpecialList = false;
                     this.initTableData(1);
@@ -67,9 +66,9 @@
                 }
             },
             initTableData(page) {
-                this.$API.getNewsByTypeId(this.columns,page).then(res => {
+                this.$API.getNewsByTypeId(this.columns, page).then(res => {
                     window.console.log(res.data);
-                    if(res.data.success){
+                    if (res.data.success) {
                         this.cmsTableData = res.data.queryResult.list;//列表数据
                         this.totalElements = res.data.queryResult.total;
                     }
