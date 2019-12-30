@@ -51,6 +51,15 @@
                     <!--                    评论列表-->
                     <news-show-comment :news-id="articleInfo.newsid" :comments="newsComments" @cancelSubmitContent="cancel" @submitContent="submit"></news-show-comment>
                     <news-comment :show-drawer="showReportNewsDrawer" :title="'举报新闻'" :placeholder="'请输入举报原因'" :cancel-info="'是否取消举报'" @cancelSubmitContent="cancelReport" @submitContent="submitReport"></news-comment>
+                    <div style="display: flex;justify-content: center;padding: 2rem;">
+                        <el-pagination
+                                :current-page="1"
+                                background
+                                layout="prev, pager, next, total"
+                                :hide-on-single-page="true"
+                                :total="totalElements" @size-change="sizeChange" @current-change="currentChange">
+                        </el-pagination>
+                    </div>
                 </el-card>
             </div>
             <!--            没有文章时-->
@@ -100,6 +109,7 @@
                 showCommentDrawer: false,//是否显示评论的抽屉
                 newsComments: [],//评论列表,
                 showReportNewsDrawer:false,
+                totalComment:0,
             }
         },
         methods: {
@@ -122,6 +132,18 @@
                 } else {//没有则跳转回主页
                     this.$router.push({path: '/'});
                 }
+            },
+            initComment(page){//初始化评论
+                let newsId = this.checkUrl();//得到栏目
+                this.$API.getCommentsByNewsId(newsId,page).then(res=>{
+                    window.console.log(res)
+                })
+            },
+            sizeChange() {
+
+            },
+            currentChange(currPage) {
+                this.initComment(currPage);
             },
             // formatArticle() {//对文章格式化
             //     let article = this.articleInfo.articleContent;

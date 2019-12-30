@@ -16,7 +16,7 @@
                         <div class="cms-comments-replay-button" @click="replayUser(item.user.userId,item.user.userNickname)"><el-button plain size="mini">回复</el-button></div>
                     </el-col>
                     <el-col :span="24" class="cms-comment-info">
-                        <span class="cms-comment-replay" v-if="item.replyUser && item.replyUser.userId">@{{item.replyUser.userNickname}}</span>
+                        <span class="cms-comment-replay" v-if="item.replyUser && item.replyUser.id">@{{item.replyUser.userNickname}}</span>
                         &nbsp;&nbsp;<span>{{item.commentContent}}</span>
                     </el-col>
                     <el-col :span="24" class="cms-comment-time">

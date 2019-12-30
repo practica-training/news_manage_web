@@ -170,4 +170,27 @@
     .el-tabs__content{
         overflow-y: scroll !important;
     }
+
+    .user-news-tabs .el-tabs__header{
+        width: 100%;
+    }
+
+    .user-news-tabs .el-tabs__nav{
+        display:flex;
+        justify-content:left;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .user-news-tabs .el-tabs__item{
+        padding: 0 !important;
+        width: 100% !important;
+        text-align: center !important;
+    }
+
+    .cms-text-overflow .cell{
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+    }
 </style>

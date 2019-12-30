@@ -78,6 +78,8 @@
                 <el-form-item>
                 </el-form-item>
                 <el-form-item v-if="!IsOtherUserInfo">
+                    <el-button v-if="UserInfo.userState != 2" v-show="!isUpdate" style="float: left;" type="danger" plain round @click="showApplication">申请成为新闻发布者
+                    </el-button>
                     <el-button v-show="!isUpdate" style="float: right;" plain round @click="isUpdate = true">修改资料
                     </el-button>
                     <el-button v-show="isUpdate" style="float: left;" type="primary" round
@@ -209,6 +211,8 @@
             <!--            修改密码-->
 
             <news-comment :title="'举报用户'" :show-drawer="showReportDrawer" :placeholder="'请输入举报原因'" :cancel-info="'是否取消举报'" @cancelSubmitContent="cancelReport" @submitContent="submitReport"></news-comment>
+
+            <news-comment :title="'申请成为新闻发布者'" :show-drawer="showApplicationDrawer" :placeholder="'请输入申请理由'" :cancel-info="'是否取消申请'" @cancelSubmitContent="cancelApplication" @submitContent="submitApplication"></news-comment>
         </div>
     </div>
 </template>
@@ -267,6 +271,7 @@
                 realName: "",//真实姓名
                 idCard: "",//身份证号码
                 showReportDrawer:false,
+                showApplicationDrawer:false
             }
         },
         methods: {
@@ -623,14 +628,43 @@
                 }
             },
 
+            //显示申请成为新闻发布者
+            showApplication(){
+                //如果没绑定手机
+                if(!this.UserInfo.userPhone){
+                    this.$message.error("请先绑定手机号");
+                    return;
+                }
+                //如果没实名认证
+                if(this.UserInfo.isCertified == 0){
+                    this.$message.error("请先实名认证");
+                    return;
+                }
+                this.showApplicationDrawer = true;
+            },
+
+            //取消申请
+            cancelApplication(){
+                this.showApplicationDrawer = false;
+            },
+
+            //提交申请
+            submitApplication(content){
+                window.console.log(content);
+                this.showApplicationDrawer = false;
+            },
+
+            //显示举报
             showReport(){
                 this.showReportDrawer = true;
             },
 
+            //取消举报
             cancelReport(){
                 this.showReportDrawer = false;
             },
 
+            //确认举报
             submitReport(content){
                 this.showReportDrawer = false;
                 window.console.log(content)

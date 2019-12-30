@@ -91,9 +91,15 @@
                                                 <el-tab-pane label="我的资料" name="myInfo">
                                                     <user-info :user-info="userInfo" :base-url="baseURL"></user-info>
                                                 </el-tab-pane>
-                                                <el-tab-pane label="我的文章" name="myArticle">我的文章</el-tab-pane>
-                                                <el-tab-pane label="我的评论" name="myComment">我的评论</el-tab-pane>
-                                                <el-tab-pane label="我的消息" name="myMessage">我的消息</el-tab-pane>
+                                                <el-tab-pane label="我的文章" name="myArticle">
+                                                    <user-news></user-news>
+                                                </el-tab-pane>
+                                                <el-tab-pane label="我的评论" name="myComment">
+                                                    <user-comments></user-comments>
+                                                </el-tab-pane>
+                                                <el-tab-pane label="我的消息" name="myMessage">
+                                                    <user-message></user-message>
+                                                </el-tab-pane>
                                             </el-tabs>
                                         </div>
                                     </el-drawer>
@@ -112,11 +118,17 @@
     import {Input, Form, FormItem, Dialog, Tooltip, Popover, Drawer, Tabs, TabPane} from 'element-ui'
     import UserInfo from "./UserInfo";
     import store from '../store'
+    import UserNews from "./UserNews";
+    import UserComments from "./UserComments";
+    import UserMessage from "./UserMessage";
 
     export default {
         name: "CmsHeader",
         store,
         components: {
+            UserMessage,
+            UserComments,
+            UserNews,
             [Input.name]: Input,
             [Form.name]: Form,
             [FormItem.name]: FormItem,

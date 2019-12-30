@@ -88,7 +88,10 @@
                 linkStr = linkStr.substring(0, linkStr.length - 1);
                 linkStr = linkStr.substring(linkStr.lastIndexOf("/") + 1, linkStr.length);
                 let routeUrl = this.$router.resolve({
-                    path: this.CarouselRoute + "?" + linkStr,
+                    path: this.CarouselRoute,
+                    query:{
+                        id:linkStr
+                    },
                 });
                 window.open(routeUrl.href, '_blank');
             },
