@@ -33,72 +33,46 @@
         },
         data() {
             return {
-                messages: [
-                    {
-                        id:"123",
-                        formID: "",
-                        content: "你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核",
-                        createTime: "2019年12月30日 15:44",
-                        isRead: 0
-                    },
-                    {
-                        id:"123",
-                        formID: "",
-                        content: "你已经通过审核",
-                        createTime: "2019年12月30日 15:44",
-                        isRead: 1
-                    },
-                    {
-                        id:"123",
-                        formID: "",
-                        content: "你已经通过审核",
-                        createTime: "2019年12月30日 15:44",
-                        isRead: 0
-                    },
-                    {
-                        id:"123",
-                        formID: "",
-                        content: "你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核",
-                        createTime: "2019年12月30日 15:44",
-                        isRead: 0
-                    },
-                    {
-                        id:"123",
-                        formID: "",
-                        content: "你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核",
-                        createTime: "2019年12月30日 15:44",
-                        isRead: 0
-                    },
-                    {
-                        id:"123",
-                        formID: "",
-                        content: "你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核你已经通过审核",
-                        createTime: "2019年12月30日 15:44",
-                        isRead: 0
-                    },
-                ],
+                messages: [],
             }
         },
         methods:{
-            deleteMessage(index,id){
-                if(index == 0){
-                    this.messages = this.messages.slice(1,this.messages.length);
-                }else{
-                    this.messages = this.messages.slice(0,index).concat(this.messages.slice(index+1,this.messages.length));
-                }
+            initMessages(){
+                this.$API.getUserMessages().then(res => {
+                    window.console.log(res.data);
+                    if(res.data.success){
+                        this.messages = res.data.list;
+                    }
+                })
             },
-            readMessage(index,id){
+            //删除消息
+            deleteMessage(index,id){
+                let loading = this.$loading({
+                    text: "正在删除"
+                });
+                this.$API.deleteMessage(id).then(res => {
+                   if(res.data.success){
+                       loading.close();
+                       if(index == 0){
+                           this.messages = this.messages.slice(1,this.messages.length);
+                       }else{
+                           this.messages = this.messages.slice(0,index).concat(this.messages.slice(index+1,this.messages.length));
+                       }
+                   }
+                });
+            },
+            //读消息
+            readMessage(index){
                 this.messages[index].isRead = 1;
-                window.console.log(id)
+                let loading = this.$loading();
+                this.$API.readMessage(this.messages[index]).then(res => {
+                    window.console.log(res)
+                });
+                loading.close();
             }
         },
         created() {
-            this.$API.getUserMessages().then(res => {
-                window.console.log(res.data);
-                if(res.data.success){
-                    this.messages = res.data.list;
-                }
-            })
+            this.initMessages();
         }
     }
 </script>

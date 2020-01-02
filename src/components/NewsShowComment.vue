@@ -10,13 +10,13 @@
             <template v-for="(item,index) in Comments">
                 <el-col class="cms-comment-box" :span="24" :key="index">
                     <el-col :span="24" class="cms-comments-user-info">
-                        <img class="cms-cursor" v-if="item.user.userAvatar" :src="baseUrl + item.user.userAvatar" @click="lookUserInfo(item.user.userId)"/>
-                        <img class="cms-cursor" v-else src="../static/images/login.png" @click="lookUserInfo(item.user.userId)"/>
-                        <span class="cms-not-copy cms-cursor" @click="lookUserInfo(item.user.userId)">{{item.user.userNickname}}</span>
-                        <div class="cms-comments-replay-button" @click="replayUser(item.user.userId,item.user.userNickname)"><el-button plain size="mini">回复</el-button></div>
+                        <img class="cms-cursor" v-if="item.userAvatar" :src="baseUrl + item.userAvatar" @click="lookUserInfo(item.userId)"/>
+                        <img class="cms-cursor" v-else src="../static/images/login.png" @click="lookUserInfo(item.userId)"/>
+                        <span class="cms-not-copy cms-cursor" @click="lookUserInfo(item.userId)">{{item.userNickname}}</span>
+                        <div v-if="currUserInfo.id != item.userId" class="cms-comments-replay-button" @click="replayUser(item.userId,item.userNickname)"><el-button plain size="mini">回复</el-button></div>
                     </el-col>
                     <el-col :span="24" class="cms-comment-info">
-                        <span class="cms-comment-replay" v-if="item.replyUser && item.replyUser.id">@{{item.replyUser.userNickname}}</span>
+                        <span class="cms-comment-replay" v-if="item.replyUserId">@{{item.replyUserNickname}}</span>
                         &nbsp;&nbsp;<span>{{item.commentContent}}</span>
                     </el-col>
                     <el-col :span="24" class="cms-comment-time">
@@ -24,7 +24,7 @@
                     </el-col>
                 </el-col>
             </template>
-            <news-comment :show-drawer="showReplayCommentDrawer" :Title="'回复'+ currReplayUserNickname + '的评论'" :Placeholder="'请输入回复内容'"  @cancelSubmitContent="cancel" @submitContent="submit"></news-comment>
+            <news-comment :show-drawer="showReplayCommentDrawer" :Title="'回复'+ currReplayUserNickname + '的评论'" :Placeholder="'请输入回复内容'"  @cancelSubmitContent="cancelComment" @submitContent="submitComment"></news-comment>
             <el-dialog :title="userInfo.userNickname" :visible.sync="showUserInfo" :modal="false" width="85%">
                 <user-info :base-url="baseUrl" :user-info="userInfo" :is-other-user-info="true"></user-info>
             </el-dialog>
@@ -36,8 +36,10 @@
     import {Button,Dialog} from "element-ui";
     import NewsComment from "./NewsComment";
     import UserInfo from "./UserInfo";
+    import store from "../store";
     export default {
         name: "NewsShowComment",
+        store,
         props:{
             Comments:{
                 type:Array,
@@ -55,39 +57,12 @@
         data(){
             return{
                 baseUrl:this.$API.BaseUrl,
-                // newsComments: [
-                //     {
-                //         user:{
-                //             userId:"8abc89d66f464f84016f4655fd4d0001",
-                //             userAvatar:"",
-                //             userNickname:"我",
-                //         },
-                //         commentContent:"真棒",
-                //         commentTime:"2019年12月29日",
-                //         replyUser:{
-                //             userId:"12345",
-                //             userAvatar:"",
-                //             userNickname:"他",
-                //         }
-                //     },
-                //     {
-                //         user:{
-                //             userId:"12345",
-                //             userAvatar:"",
-                //             userNickname:"他",
-                //         },
-                //         commentContent:"差点就信了",
-                //         commentTime:"2019年12月29日",
-                //         replyUser:{
-                //         }
-                //     },
-                // ],
                 showReplayCommentDrawer:false,
                 currReplayUserNickname:"",
                 currReplayUserId:"",
                 showUserInfo:false,
                 userInfo:{},
-
+                currUserInfo:store.state.userInfo
             }
         },
         methods:{
@@ -96,19 +71,31 @@
                 this.currReplayUserId = userId;
                 this.currReplayUserNickname = userNickname;
             },
-            cancel(){
+            cancelComment(){
                 this.showReplayCommentDrawer = false;
                 this.currReplayUserId = "";
                 this.currReplayUserNickname = "";
             },
-            submit(comment){
-                window.console.log("提交评论 " + comment)
+            submitComment(comment){
+                window.console.log("提交评论 " + comment);
+                let loading = this.$loading({
+                    text: "正在提交"
+                });
+                this.$API.submitComment(this.NewsId,comment,this.currReplayUserId).then(res => {
+                    loading.close();
+                    if(res.data.success){
+                        this.$message.success("评论成功");
+                        this.$emit("listenAddComment",res.data.comment);
+                    }else{
+                        this.$message.success("发生错误，评论失败");
+                    }
+                })
+                this.cancelComment();
             },
             lookUserInfo(userId){
                 this.$API.getUserInfo(userId).then(res => {
                     this.userInfo = res.data;
                     this.showUserInfo = true;
-                    window.console.log(this.userInfo)
                 })
             },
         }

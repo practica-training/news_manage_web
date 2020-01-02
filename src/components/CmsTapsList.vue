@@ -5,12 +5,12 @@
                 <el-tab-pane name="0" tab-position="left">
                     <div class="cms-tab-title" :class="{'cms-tab-title-active':(currTab == '0')}" slot="label"><span style="font-size: 1.3rem;color: #e4e7ed;">|</span>&nbsp;{{ListTitle1}}<span class="cms-tab-title-more" @click="ToMore(ListUrl1)">更多<i class="el-icon-d-arrow-right"></i></span></div>
                     <template v-for="(item,index) in ListData1">
-                        <el-col :md="24/OneShowInLine-1" :sm="24/OneShowInLine-1" :xs="24" :key="index" @click.native="lookArticle(item.articleId)" class="cms-news-information-tap">
+                        <el-col :md="24/OneShowInLine-1" :sm="24/OneShowInLine-1" :xs="24" :key="index" @click.native="lookArticle(item.newsId)" class="cms-news-information-tap">
                             <el-col :md="17" :sm="16" :xs="15" class="cms-news-build-title">
-                                {{item.title}}
+                                {{item.newsTitle}}
                             </el-col>
                             <el-col :md="7" :sm="8" :xs="9" class="cms-news-build-date">
-                                {{item.createTime.split(" ")[0]}}
+                                {{item.publishTime.slice(0,item.publishTime.indexOf("日") + 1)}}
                             </el-col>
                         </el-col>
                     </template>
@@ -23,12 +23,12 @@
                 <el-tab-pane name="1" tab-position="right">
                     <div class="cms-tab-title" :class="{'cms-tab-title-active':(currTab == '1')}" slot="label"><span style="font-size: 1.3rem;color: #e4e7ed;">|</span>&nbsp;{{ListTitle2}} <span class="cms-tab-title-more" @click="ToMore(ListUrl2)">更多<i class="el-icon-d-arrow-right"></i></span></div>
                     <template v-for="(item,index) in ListData2">
-                        <el-col :md="24/OneShowInLine-1" :sm="24/OneShowInLine-1" :xs="24" :key="index" @click.native="lookArticle(item.articleId)" class="cms-news-information-tap">
+                        <el-col :md="24/OneShowInLine-1" :sm="24/OneShowInLine-1" :xs="24" :key="index" @click.native="lookArticle(item.newsId)" class="cms-news-information-tap">
                             <el-col :md="17" :sm="16" :xs="15" class="cms-news-build-title">
-                                {{item.title}}
+                                {{item.newsTitle}}
                             </el-col>
                             <el-col :md="7" :sm="8" :xs="9" class="cms-news-build-date">
-                                {{item.createTime.split(" ")[0]}}
+                                {{item.publishTime.slice(0,item.publishTime.indexOf("日") + 1)}}
                             </el-col>
                         </el-col>
                     </template>

@@ -23,10 +23,10 @@
                         <div class="cms-article-title-e">
                             <i class="el-icon-collection-tag"></i>
                             <template v-for="(item,index) in articleInfo.newsTypeSet">
-                                <span v-if="index != 0"></span>
+                                <span v-if="index != 0" :key="item.id"></span>
                                 <span :key="item.id">{{item.name}}</span>
                             </template>
-<!--                            {{articleInfo.likeNumber}}-->
+                            <!--                            {{articleInfo.likeNumber}}-->
                             &nbsp;&nbsp;
                             <i class="el-icon-time"></i>{{articleInfo.publishTime}}
                             &nbsp;&nbsp;
@@ -44,13 +44,17 @@
                         <div class="cms-comment-title">评论</div>
                         <!--                评论按钮-->
                         <el-button size="mini" class="cms-comment-button" type="default" plain round
-                                   @click="showCommentDrawer=true">参与评论
+                                   @click="showComment">参与评论
                         </el-button>
-                        <news-comment :show-drawer="showCommentDrawer"></news-comment>
+                        <news-comment :show-drawer="showCommentDrawer" @cancelSubmitContent="cancelComment"
+                                      @submitContent="submitComment"></news-comment>
                     </div>
                     <!--                    评论列表-->
-                    <news-show-comment :news-id="articleInfo.newsid" :comments="newsComments" @cancelSubmitContent="cancel" @submitContent="submit"></news-show-comment>
-                    <news-comment :show-drawer="showReportNewsDrawer" :title="'举报新闻'" :placeholder="'请输入举报原因'" :cancel-info="'是否取消举报'" @cancelSubmitContent="cancelReport" @submitContent="submitReport"></news-comment>
+                    <news-show-comment :news-id="articleInfo.newsId" :comments="newsComments"
+                                       @listenAddComment="addComment"></news-show-comment>
+                    <news-comment :show-drawer="showReportNewsDrawer" :title="'举报新闻'" :placeholder="'请输入举报原因'"
+                                  :cancel-info="'是否取消举报'" @cancelSubmitContent="cancelReport"
+                                  @submitContent="submitReport"></news-comment>
                     <div style="display: flex;justify-content: center;padding: 2rem;">
                         <el-pagination
                                 :current-page="1"
@@ -98,7 +102,7 @@
         components: {
             NewsComment,
             NewsShowComment,
-            [Pagination.name]:Pagination
+            [Pagination.name]: Pagination
         },
         data() {
             return {
@@ -110,8 +114,8 @@
                 imgList: [],
                 showCommentDrawer: false,//是否显示评论的抽屉
                 newsComments: [],//评论列表,
-                showReportNewsDrawer:false,
-                totalComment:0,
+                showReportNewsDrawer: false,
+                totalComment: 0,
             }
         },
         methods: {
@@ -134,12 +138,13 @@
                     this.$router.push({path: '/'});
                 }
             },
-            initComment(page){//初始化评论
+            initComment(page) {//初始化评论
                 let newsId = this.checkUrl();//得到id
-                this.$API.getCommentsByNewsId(newsId,page).then(res=>{
-                    if(res.data.success){
+                this.$API.getCommentsByNewsId(newsId, page).then(res => {
+                    window.console.log(res)
+                    if (res.data.success) {
                         this.newsComments = res.data.queryResult.list;
-                        this.totalComment = res.data.total;
+                        this.totalComment = res.data.queryResult.total;
                     }
                 })
             },
@@ -182,23 +187,23 @@
                     this.$router.push({path: '/list?' + this.currCid});
                 }
             },
-            showReportNews(){//显示举报新闻抽屉
+            showReportNews() {//显示举报新闻抽屉
                 this.showReportNewsDrawer = true;
             },
-            cancelReport(){
+            cancelReport() {
                 this.showReportNewsDrawer = false;
             },
             //提交举报
-            submitReport(content){
+            submitReport(content) {
                 this.showReportNewsDrawer = false;
                 let loading = this.$loading({
                     text: "正在提交"
                 });
-                this.$API.reportNews(this.articleInfo.id,content).then(res => {
+                this.$API.reportNews(this.articleInfo.id, content).then(res => {
                     loading.close();
-                    if(res.data.success){
+                    if (res.data.success) {
                         this.$message.success("已提交举报，感谢您为净化网络环境做贡献");
-                    }else{
+                    } else {
                         this.$message.success("发生错误，举报失败");
                     }
                 })
@@ -234,22 +239,44 @@
                 window.location.href = "about:blank";
                 window.close();
             },
-            cancel(){
+            //往所有评论的数组里加入新的
+            addComment(comment) {
+                this.newsComments.push(comment);
+                this.totalComment = this.newsComments.length;
+            },
+            showComment() {
+                let userInfo = store.state.userInfo;
+                if (userInfo) {//如果已经登录了
+                    if (userInfo.isCertified) {//如果已经实名认证了，才能评论
+                        this.showCommentDrawer = true;
+                    } else {
+                        this.$message.error("请先实名认证");
+                    }
+                } else {
+                    this.$message.error("请先登录");
+                }
+            },
+            cancelComment() {
+                this.showCommentDrawer = false;
                 window.console.log("取消评论")
             },
-            submit(comment){
-                window.console.log("提交评论 " + comment)
-                // let loading = this.$loading({
-                //     text: "正在提交"
-                // });
-                // this.$API.reportNews(this.articleInfo.id,content).then(res => {
-                //     loading.close();
-                //     if(res.data.success){
-                //         this.$message.success("已提交举报，感谢您为净化网络环境做贡献");
-                //     }else{
-                //         this.$message.success("发生错误，举报失败");
-                //     }
-                // })
+            submitComment(comment) {
+                window.console.log("提交评论 " + comment);
+                let loading = this.$loading({
+                    text: "正在提交"
+                });
+                this.showCommentDrawer = false;
+                this.$API.submitComment(this.articleInfo.newsId, comment).then(res => {
+                    loading.close();
+                    if (res.data.success) {
+                        this.$message.success("评论成功");
+                        window.console.log(res.data.comment);
+                        window.console.log(store.state.userInfo);
+                        this.addComment(res.data.comment);
+                    } else {
+                        this.$message.success("发生错误，评论成功");
+                    }
+                })
             },
         },
         async created() {

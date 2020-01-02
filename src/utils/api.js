@@ -1,8 +1,10 @@
 import axios from 'axios';
 import store from '../store'
 
-let BaseUrl = "http://10.60.9.86:8888";
-//let BaseUrl = "http://zzhong.wang:8888";
+//let BaseUrl = "http://192.168.1.120:8888";
+//let BaseUrl = "http://192.168.1.101:8888";
+//let BaseUrl = "http://10.60.9.86:8888";
+let BaseUrl = "http://zzhong.wang:8888";
 //let BaseUrl = "http://10.62.120.80:8888";
 
 // 创建axios实例
@@ -105,12 +107,12 @@ export default {
      * @returns {AxiosPromise}
      */
     updateVerifiedInfo(verifiedInfo) {
-        let formData = new FormData(); //创建form对象
-        formData.append('realName', verifiedInfo.realName);//通过append向form对象添加数据
-        formData.append('idCard', verifiedInfo.idCard);//通过append向form对象添加数据
-        formData.append('photo', verifiedInfo.photo);//通过append向form对象添加数据
-        window.console.log(formData)
-        return request(BaseUrl + "/manage/userVerified/userId/" + store.state.userId, "PUT", verifiedInfo);
+        return request(BaseUrl + "/manage/userVerified/userid/" + store.state.userId, "POST", {
+            user:store.state.userInfo,
+            realName:verifiedInfo.realName,
+            idCard:verifiedInfo.idCard,
+            photo:verifiedInfo.photo
+        });
     },
 
     /**
@@ -153,6 +155,26 @@ export default {
      */
     getUserMessages() {
         return request(BaseUrl + "/manage/message/getUserMessage/" + store.state.userId, "GET", {});
+    },
+
+    /**
+     * 删除消息
+     * @param id
+     * @returns {AxiosPromise}
+     */
+    deleteMessage(id){
+        return request(BaseUrl + "/manage/message/id/" + id, "DELETE", {});
+    },
+
+    /**
+     * 修改消息（主要改为已读）
+     * @param id
+     */
+    readMessage(message){
+        message.toid = store.state.userId;
+        message.user = store.state.userInfo;
+        window.console.log(message);
+        return request(BaseUrl + "/manage/message/id/" + message.id, "PUT", message);
     },
 
     /**
@@ -199,6 +221,16 @@ export default {
     },
 
     /**
+     * 获得用户指定状态的新闻
+     * @param page
+     * @param newsState
+     * @returns {AxiosPromise}
+     */
+    getNewsByState(page = 1,newsState = 0){
+        return request(BaseUrl + "/manage/news?userid=" + store.state.userId  + "&newsState=" + newsState + "&page=" + page, "GET", {});
+    },
+
+    /**
      * 根据新闻id获取新闻详情
      * @param newsId
      * @returns {AxiosPromise}
@@ -207,6 +239,41 @@ export default {
         let url = "/manage/news/id/{id}";
         url = url.replace("{id}", newsId);
         return request(BaseUrl + url, "GET", {});
+    },
+
+    /**
+     *  添加新闻
+     * @param newsTitle
+     * @param newsAvatar
+     * @param content
+     * @returns {AxiosPromise}
+     */
+    addNews(newsTitle,newsAvatar,content){
+        return request(BaseUrl + "/manage/news", "POST", {
+            user:store.state.userInfo,
+            newsTitle:newsTitle,
+            newsAvatar:newsAvatar,
+            content:content,
+            newsState:0
+        });
+    },
+
+    /**
+     * 更新新闻
+     * @param newsId
+     * @param newsTitle
+     * @param newsAvatar
+     * @param content
+     * @returns {AxiosPromise}
+     */
+    updateNews(newsId,newsTitle,newsAvatar,content,newsState = 0){
+        return request(BaseUrl + "/manage/news/id/" + newsId, "POST", {
+            user:store.state.userInfo,
+            newsTitle:newsTitle,
+            newsAvatar:newsAvatar,
+            content:content,
+            newsState:newsState
+        });
     },
 
     /**
@@ -222,8 +289,74 @@ export default {
         return request(BaseUrl + url, "GET", {});
     },
 
-    submitComment(){
+    /**
+     * 获得当前用户发的评论
+     * @param page
+     */
+    getCommentsByCurrUser(page){
+        let url = "/manage/comment/userId/{userId}/{page}";
+        url = url.replace("{userId}", store.state.userId);
+        url = url.replace("{page}", page);
+        return request(BaseUrl + url, "GET", {});
+    },
 
+    /**
+     * 获得发给当前用户的评论
+     * @param page
+     * @returns {AxiosPromise}
+     */
+    getCommentsToCurrUser(page){
+        let url = "/manage/comment/replyUserId/{replyUserId}/{page}";
+        url = url.replace("{replyUserId}", store.state.userId);
+        url = url.replace("{page}", page);
+        return request(BaseUrl + url, "GET", {});
+    },
+
+    /**
+     * 通过id删除评论
+     * @param id
+     * @returns {AxiosPromise}
+     */
+    deleteComment(id) {
+        return request(BaseUrl + "/manage/comment/id/" + id, "DELETE", {});
+    },
+
+    /**
+     * 发布评论
+     * @param newsId
+     * @param userId
+     * @param commentContent
+     * @param replyUserId
+     * @returns {AxiosPromise}
+     */
+    submitComment(newsId,commentContent,replyUserId=""){
+        let data;
+        window.console.log(replyUserId)
+        if(replyUserId){
+            data = {
+                news:{
+                    id:newsId
+                },
+                user:{
+                    id:store.state.userId,
+                },
+                commentContent:commentContent,
+                replyUser:{
+                    id:replyUserId
+                }
+            }
+        }else{
+            data = {
+                news:{
+                    id:newsId
+                },
+                user:{
+                    id:store.state.userId,
+                },
+                commentContent:commentContent
+            }
+        }
+        return request(BaseUrl + "/manage/comment", "POST", data);
     },
 
     /**
@@ -233,7 +366,9 @@ export default {
      */
     applicateNewsPublisher(reason){
         return request(BaseUrl + "/manage/UserApplyToNewsMaker", "POST", {
-            userId:store.state.userId,
+            user:{
+                id:store.state.userId
+            },
             reason:reason
         });
     },

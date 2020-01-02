@@ -25,6 +25,15 @@ Vue.use(ImageViewer);
 
 import animate from 'animate.css'
 
+//引入Quill富文本编辑器
+import  VueQuillEditor from 'vue-quill-editor'
+// require styles 引入样式
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
+
+Vue.use(VueQuillEditor);
+
 //引入Element UI组件（按需引入）
 import {
     Button,      //按钮组件

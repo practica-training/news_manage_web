@@ -11,16 +11,16 @@
         </router-link>
         <el-col :md="22" :sm="24" :xs="24" class="panel panel-body cms-news-information-notice">
             <el-col :md="24" :sm="24" :xs="24" v-for="(item,index) in NoticeList" :key="index"
-                    class="cms-notice-tap" @click.native="lookArticle(item.articleId)">
+                    class="cms-notice-tap" @click.native="lookArticle(item.newsId)">
                 <el-col v-if="!TimeRight" :md="6" :sm="7" :xs="8" class="cms-notice-tap-date-box">
-                    <div class="cms-notice-tap-date-day">{{item.createTime.split(" ")[0].split("-")[2]}}</div>
-                    <div class="cms-notice-tap-date-other">{{item.createTime.split(" ")[0].split("-")[0]}}-{{item.createTime.split(" ")[0].split("-")[1]}}
+                    <div class="cms-notice-tap-date-day">{{item.publishTime.slice(item.publishTime.indexOf("月")+1,item.publishTime.indexOf("日"))}}</div>
+                    <div class="cms-notice-tap-date-other">{{item.publishTime.slice(0,item.publishTime.indexOf("月") + 1)}}
                     </div>
                 </el-col>
-                <el-col :md="18" :sm="17" :xs="16" class="cms-notice-tap-info-box">{{item.title}}</el-col>
+                <el-col :md="18" :sm="17" :xs="16" class="cms-notice-tap-info-box">{{item.newsTitle}}</el-col>
                 <el-col v-if="TimeRight" :md="6" :sm="7" :xs="8" class="cms-notice-tap-date-box">
-                    <div class="cms-notice-tap-date-day">{{item.createTime.split(" ")[0].split("-")[2]}}</div>
-                    <div class="cms-notice-tap-date-other">{{item.createTime.split(" ")[0].split("-")[0]}}-{{item.createTime.split(" ")[0].split("-")[1]}}
+                    <div class="cms-notice-tap-date-day">{{item.publishTime.slice(item.publishTime.indexOf("月")+1,item.publishTime.indexOf("日"))}}</div>
+                    <div class="cms-notice-tap-date-other">{{item.publishTime.slice(0,item.publishTime.indexOf("月") + 1)}}
                     </div>
                 </el-col>
             </el-col>

@@ -6,7 +6,7 @@
                 <el-tab-pane name="1" label="回复我的"></el-tab-pane>
             </el-tabs>
         </el-col>
-        <el-col :lg="22" :md="21" :sm="20" :xs="19">
+        <el-col :lg="22" :md="21" :sm="20" :xs="19" style="height: 76vh;overflow-y: scroll;">
             <el-table row-class-name="cms-table-line" class="cms-select-news cms-not-copy" stripe
                       :data="list" style="cursor: pointer;"
                       :fit="true">
@@ -17,12 +17,12 @@
                 </el-table-column>
                 <el-table-column v-if="index == 1" label="@我的用户" :class-name="'cms-text-overflow'">
                     <template slot-scope="scope">
-                        <span class="cms-comment-replay" v-if="scope.row.user && scope.row.user.id">{{scope.row.user.userNickname}}</span>
+                        <span class="cms-comment-replay" v-if="scope.row.userId">{{scope.row.userNickname}}</span>
                     </template>
                 </el-table-column>
                 <el-table-column label="内容" :class-name="'cms-text-overflow'">
                     <template slot-scope="scope">
-                        <span class="cms-comment-replay" v-if="index == 0 && scope.row.replyUser && scope.row.replyUser.id">@{{scope.row.replyUser.userNickname}}&nbsp;&nbsp;</span>
+                        <span class="cms-comment-replay" v-if="index == 0 && scope.row.replyUserId">@{{scope.row.replyUserNickname}}&nbsp;&nbsp;</span>
                         <span>{{scope.row.commentContent}}</span>
                     </template>
                 </el-table-column>
@@ -46,12 +46,21 @@
                     </template>
                 </el-table-column>
             </el-table>
+            <el-col :span="24" style="display: flex;justify-content: center;padding: 1rem 0;">
+                <el-pagination
+                        :current-page="1"
+                        background
+                        layout="prev, pager, next, total"
+                        :hide-on-single-page="true"
+                        :total="totalElements" @size-change="sizeChange" @current-change="currentChange">
+                </el-pagination>
+            </el-col>
         </el-col>
     </el-col>
 </template>
 
 <script>
-    import {Table, Button, TableColumn, Tabs, TabPane} from "element-ui";
+    import {Table, Button, TableColumn, Tabs, TabPane,Pagination} from "element-ui";
 
     export default {
         name: "UserComments",
@@ -60,53 +69,46 @@
             [TabPane.name]: TabPane,
             [Table.name]: Table,
             [TableColumn.name]: TableColumn,
-            [Button.name]: Button
+            [Button.name]: Button,
+            [Pagination.name]:Pagination
         },
         data() {
             return {
                 position: "left",
                 index:"0",
-                list: [
-                    {
-                        id: "111111",
-                        user:{
-                            id:"123456",
-                            userNickname:"他"
-                        },
-                        newsId: "1234567890",
-                        commentContent: "真棒",
-                        commentTime: "2019年12月29日",
-                        replyUser:{
-                            id:"123456",
-                            userNickname:"他"
-                        }
-                    },
-                    {
-                        id: "111111",
-                        user:{
-                            id:"123456",
-                            userNickname:"她"
-                        },
-                        newsId: "1234567890",
-                        commentContent: "真棒",
-                        commentTime: "2019年12月29日",
-                    },
-                    {
-                        id: "111111",
-                        user:{
-                            id:"123456",
-                            userNickname:"你"
-                        },
-                        newsId: "1234567890",
-                        commentContent: "真棒",
-                        commentTime: "2019年12月29日",
-                    },
-                ]
+                page:1,
+                list: [],
+                totalElements:0,
             }
         },
         methods: {
-            clickNewsTab(tab) {
-                window.console.log(this.index)
+            initComment(){
+                let loading = this.$loading();
+                if(this.index == 0){//如果是当前用户发的
+                    this.$API.getCommentsByCurrUser(this.page).then(res=>{
+                        loading.close();
+                        if(res.data.success){
+                            this.list = res.data.queryResult.list;
+                            this.totalElements = res.data.queryResult.total;
+                        }
+                    }).catch(()=>{
+                        loading.close();
+                    })
+                }else{
+                    this.$API.getCommentsToCurrUser(this.page).then(res=>{
+                        loading.close();
+                        if(res.data.success){
+                            this.list = res.data.queryResult.list;
+                            this.totalElements = res.data.queryResult.total;
+                        }
+                    }).catch(()=>{
+                        loading.close();
+                    })
+                }
+            },
+            clickNewsTab() {
+                this.page = 1;//重新初始化页码
+                this.initComment();
             },
             //查看新闻
             lookArticle(row) {
@@ -118,8 +120,28 @@
             },
             //删除评论
             deleteComment(row) {
-                window.console.log(row)
+                if(window.confirm("确认要删除该评论吗")){
+                    this.$API.deleteComment(row.id).then(res=>{
+                        window.console.log(res);
+                        if(res.data.success){
+                            this.$message.success("删除成功");
+                            this.page = 1;
+                            this.initComment();
+                        }
+                    })
+                }
+
             },
+            sizeChange() {
+
+            },
+            currentChange(currPage) {
+                this.page = currPage;
+                this.initComment();
+            }
+        },
+        created() {
+            this.initComment();
         }
     }
 </script>

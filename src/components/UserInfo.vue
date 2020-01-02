@@ -14,6 +14,9 @@
         <div v-if="IsOtherUserInfo" class="user-info-tab">
             <el-button type="danger" size="mini" @click="showReport">举报</el-button>
         </div>
+        <div v-if="UserInfo.userState == 2" class="user-info-tab user-is-news-publisher cms-not-copy" style="align-items: center;">
+            <i class="el-icon-camera-solid"></i><span>新闻发布者</span>
+        </div>
         <div class="user-info-tab">
             <el-form class="cms-not-copy" label-position="right" :label-width="IsOtherUserInfo?'100px':'180px'"
                      :model="updateUserInfo">
@@ -261,13 +264,7 @@
         data() {
             return {
                 updateUserInfo: {},//用户信息
-                verifiedInfo: {
-                    // realName: "三三四四",
-                    // idCard: "11111111111111111x",
-                    // photo: "/upload/getImage?fileName=1577326327037timg.png",
-                    // reviewState:0,
-                    // failureReason:"速度发送到覅就嗖嗖覅骄傲if接啊搜夫斯基哦is阿杰哦is阿杰搜啊就我阿斯加否撒娇iOS及撒娇非赛季佛阿斯附加赛哦Jason"
-                },//实名认证信息
+                verifiedInfo: {},//实名认证信息
                 isUpdate: false,
                 userNickNameSuffixIcon: "",
                 showUpdatePasswordDialog: false,//是否显示修改密码的窗口
@@ -536,9 +533,8 @@
                 let loading = this.$loading();
                 this.$API.getVerifiedInfo().then(res => {
                     loading.close();
-                    window.console.log(res)
                     if (res.data.success) {
-                        window.console.log(res.data)
+                       this.verifiedInfo = res.data.list[0];
                     } else {
                         this.verifiedInfo = {};
                     }
@@ -704,6 +700,13 @@
                 })
             },
         },
+        watch:{
+            UserInfo(newVal){
+                if(newVal){
+                    this.updateUserInfo = JSON.parse(JSON.stringify(newVal));
+                }
+            }
+        },
         created() {
             this.updateUserInfo = JSON.parse(JSON.stringify(this.UserInfo));
         }
@@ -714,6 +717,7 @@
     .user-info-box {
         padding: 0 1rem;
         height: 80vh;
+        overflow-y: scroll;
     }
 
     .user-info-tab {
@@ -767,9 +771,7 @@
 
     .cms-divide-line {
         height: 1px;
-        width: 80%;
-        position: absolute;
-        left: 10%;
+        width: 100%;
         background-color: #999999;
     }
 
@@ -837,5 +839,22 @@
 
     .cms-verified-other-info-red {
         color: indianred;
+    }
+
+    .user-is-news-publisher{
+        transition: 0.4s;
+        font-size: 1rem;
+        font-weight: bold;
+        color: indianred;
+    }
+
+    .user-is-news-publisher:hover i{
+        transition: 0.5s;
+        color: #ee6d6d;
+    }
+
+    .user-is-news-publisher:hover span{
+        transition: 0.5s;
+        color: #ee6d6d;
     }
 </style>

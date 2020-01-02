@@ -34,7 +34,7 @@
                                :one-show-in-line="1"></cms-taps-list>
             </el-col>
 
-            <el-col class="cms-padding-distance" :md="6" :sm="22" :xs="22">
+            <el-col class="cms-padding-distance" :md="7" :sm="22" :xs="22">
                 <!--                科研动态-->
                 <cms-taps-list :list-title1="communistTitle" :list-data1="communistList" :list-url1="communistUrl"
                                :list-title2="studentActiveTitle" :list-data2="studentActiveList" :list-url2="studentActiveUrl"
@@ -76,29 +76,29 @@
                 cmsCarouselImgDecision: "alterStr",//图片描述的字段名
                 cmsCarouselImgRoute: "linkStr",    //图片跳转的链接字段
 
-                newsList: [],                      //学院动态列表
-                newsTitle: "学院要闻",              //学院动态组件标题
-                newsUrl: "/else?1",               //学院动态'更多'的跳转地址
+                newsList: [],
+                newsTitle: "财经新闻",
+                newsUrl: "/list?id=8abef8d06f59e83e016f59e85bb70000&name=财经",
 
-                noticeList: [],                    //通告公示列表
-                noticeTitle: "学院通知",           //通告公示列表标题
-                noticeUrl: "/else?2",              //通告公示'更多'的跳转地址
+                noticeList: [],
+                noticeTitle: "教育新闻",
+                noticeUrl: "/list?id=8abef8d06f59e83e016f59e85db80004&name=教育",
 
-                dynamicList: [],                   //教学动态列表
-                dynamicTitle: "教学动态",           //教学动态列表标题
-                dynamicUrl: "/list?17",            //教学动态'更多'的跳转地址
+                dynamicList: [],
+                dynamicTitle: "科技新闻",
+                dynamicUrl: "/list?id=8abef8d06f59e83e016f59e85c6e0001&name=科技",
 
-                scienceList:[],                    //科研动态列表
-                scienceTitle:"科研动态",            //科研动态标题
-                scienceUrl:"/list?25",             //科研动态'更多'的跳转地址
+                scienceList:[],
+                scienceTitle:"娱乐新闻",
+                scienceUrl:"/list?id=8abef8d06f59e83e016f59e85f060007&name=娱乐",
 
-                communistList: [],                 //党建思政列表
-                communistTitle: "党建思政",         //党建思政标题
-                communistUrl: "/list?11",          //党建思政'更多'的跳转地址
+                communistList: [],
+                communistTitle: "军事新闻",
+                communistUrl: "/list?id=8abef8d06f59e83e016f59e85e960006&name=军事",
 
-                studentActiveList:[],              //学生活动列表
-                studentActiveTitle: "学生活动",     //学生活动标题
-                studentActiveUrl: "/list?34",      //学生活动列表'更多'的跳转地址
+                studentActiveList:[],
+                studentActiveTitle: "时尚新闻",
+                studentActiveUrl: "/list?id=8abef8d06f59e83e016f59e85f740008&name=时尚",
             }
         },
         methods: {
@@ -113,80 +113,84 @@
                     })
                 }
             },
-            initCmsNewsDynamicList(num) {               //初始化学院动态
+            initCmsNewsDynamicList(num) {               //初始化财经新闻
                 if (num != 0) {
-                    if (store.state.cmsNewsDynamicList) {//如果已经有学院动态列表了,就不请求了
+                    if (store.state.cmsNewsDynamicList) {//如果已经有财经新闻列表了,就不请求了
                         this.newsList = store.state.cmsNewsDynamicList.slice(0, num);
                     } else {//否则获取一次
-                        this.$Get(this.$cmsInterface.DgutGetNewsList.url).then((response) => {
-                            this.newsList = response.data.content.slice(0, num);
-                            //获取以后保存进全局变量,减少请求
-                            store.commit("initCmsNewsDynamicList", response.data.content);
-                        })
+                        this.$API.getNewsByTypeId("8abef8d06f59e83e016f59e85bb70000", 1).then(res => {
+                            if (res.data.success) {
+                                this.newsList = res.data.queryResult.list;//列表数据
+                                //获取以后保存进全局变量,减少请求
+                                store.commit("initCmsNewsDynamicList", this.newsList);
+                            }
+                        });
                     }
                 }
             },
-            initCmsNoticeList() {               //初始化通告公示
-                if (store.state.cmsNoticeList) {//如果已经有通告公示了,就不请求了
+            initCmsNoticeList() {               //初始化教育新闻
+                if (store.state.cmsNoticeList) {
                     this.noticeList = store.state.cmsNoticeList;
                 } else {//否则获取一次
-                    this.$Get(this.$cmsInterface.DgutGetNoticeList.url).then((response) => {
-                        this.noticeList = response.data.content.slice(0, 5);
-                        //获取以后保存进全局变量,减少请求
-                        store.commit("initCmsNoticeList", this.noticeList);
-                    })
+                    this.$API.getNewsByTypeId("8abef8d06f59e83e016f59e85db80004", 1).then(res => {
+                        if (res.data.success) {
+                            this.noticeList = res.data.queryResult.list;//列表数据
+                            //获取以后保存进全局变量,减少请求
+                            store.commit("initCmsNoticeList", this.noticeList);
+                        }
+                    });
                 }
             },
-            initCmsTeachingDynamicList() {               //初始化教学动态
-                if (store.state.cmsTeachingDynamicList) {//如果已经有教学列表了,就不请求了
+            initCmsTeachingDynamicList() {               //初始化科技新闻
+                if (store.state.cmsTeachingDynamicList) {
                     this.dynamicList = store.state.cmsTeachingDynamicList;
                 } else {//否则获取一次
-                    //获取教学动态url
-                    let dynamic = this.$cmsInterface.DgutGetNewsListByColumns.url.replace("$columns", "17");
-                    this.$Get(dynamic).then((response) => {
-                        this.dynamicList = response.data.content;
-                        //获取以后保存进全局变量,减少请求
-                        store.commit("initCmsTeachingDynamicList", this.dynamicList);
-                    })
+                    this.$API.getNewsByTypeId("8abef8d06f59e83e016f59e85c6e0001", 1).then(res => {
+                        if (res.data.success) {
+                            this.dynamicList = res.data.queryResult.list;//列表数据
+                            //获取以后保存进全局变量,减少请求
+                            store.commit("initCmsTeachingDynamicList", this.dynamicList);
+                        }
+                    });
                 }
             },
-            initCmsScienceList(){
-                if (store.state.cmsScienceList) {//如果已经有科研列表了,就不请求了
+            initCmsScienceList(){//娱乐新闻
+                if (store.state.cmsScienceList) {
                     this.scienceList = store.state.cmsScienceList;
                 } else {//否则获取一次
-                    //获取科学研究动态url
-                    let communist = this.$cmsInterface.DgutGetNewsListByColumns.url.replace("$columns", "25");
-                    this.$Get(communist).then((response) => {
-                        this.scienceList = response.data.content;
-                        //获取以后保存进全局变量,减少请求
-                        store.commit("initCmsScienceList", response.data.content);
-                    })
+                    this.$API.getNewsByTypeId("8abef8d06f59e83e016f59e85f060007", 1).then(res => {
+                        if (res.data.success) {
+                            this.scienceList = res.data.queryResult.list;//列表数据
+                            //获取以后保存进全局变量,减少请求
+                            store.commit("initCmsScienceList", this.scienceList);
+                        }
+                    });
                 }
             },
-            initCmsCommunistList() {
-                if (store.state.cmsCommunistList) {//如果已经有党建思政列表了,就不请求了
+            initCmsCommunistList() {//军事新闻
+                if (store.state.cmsCommunistList) {
                     this.communistList = store.state.cmsCommunistList;
                 } else {//否则获取一次
-                    //获取党建思政url
-                    let communist = this.$cmsInterface.DgutGetNewsListByColumns.url.replace("$columns", "11");
-                    this.$Get(communist).then((response) => {
-                        this.communistList = response.data.content;
-                        //获取以后保存进全局变量,减少请求
-                        store.commit("initCmsCommunistList", response.data.content);
-                    })
+                    this.$API.getNewsByTypeId("8abef8d06f59e83e016f59e85e960006", 1).then(res => {
+                        if (res.data.success) {
+                            this.communistList = res.data.queryResult.list;//列表数据
+                            //获取以后保存进全局变量,减少请求
+                            store.commit("initCmsCommunistList", this.communistList);
+                        }
+                    });
                 }
             },
-            initCmsStudentActiveList(){
+            initCmsStudentActiveList(){//时尚新闻 8abef8d06f59e83e016f59e85f740008
                 if (store.state.cmsStudentActiveList) {//如果已经有学生活动列表了,就不请求了
                     this.studentActiveList = store.state.cmsStudentActiveList;
                 } else {//否则获取一次
-                    //获取学生活动url
-                    let communist = this.$cmsInterface.DgutGetNewsListByColumns.url.replace("$columns", "34");
-                    this.$Get(communist).then((response) => {
-                        this.studentActiveList = response.data.content;
-                        //获取以后保存进全局变量,减少请求
-                        store.commit("initCmsStudentActiveList", response.data.content);
-                    })
+                    this.$API.getNewsByTypeId("8abef8d06f59e83e016f59e85f740008", 1).then(res => {
+                        if (res.data.success) {
+                            this.studentActiveList =  res.data.queryResult.list;//列表数据
+                            //获取以后保存进全局变量,减少请求
+                            store.commit("initCmsStudentActiveList", this.studentActiveList);
+                        }
+                    });
                 }
             },
             getCarouselHeight(data) {//得到轮播图的高度,子组件返回

@@ -62,16 +62,16 @@
                                         <div class="cms-user-info-title cms-not-copy">{{userInfo.userNickname}}</div>
                                         <div class="cms-divide-line"></div>
                                         <div class="cms-user-info-tap cms-not-copy"
-                                             @click="showDrawer = true,activeName='myInfo'">我的资料
+                                             @click="openDrawer('myInfo')">我的资料
                                         </div>
                                         <div class="cms-user-info-tap cms-not-copy"
-                                             @click="showDrawer = true,activeName='myArticle'">我的文章
+                                             @click="openDrawer('myArticle')">我的新闻
                                         </div>
                                         <div class="cms-user-info-tap cms-not-copy"
-                                             @click="showDrawer = true,activeName='myComment'">我的评论
+                                             @click="openDrawer('myComment')">我的评论
                                         </div>
                                         <div class="cms-user-info-tap cms-not-copy"
-                                             @click="showDrawer = true,activeName='myMessage'">我的消息
+                                             @click="openDrawer('myMessage')">我的消息
                                         </div>
                                         <div class="cms-divide-line"></div>
                                         <div class="cms-user-info-tap cms-not-copy" @click="logout">退出登录</div>
@@ -91,7 +91,7 @@
                                                 <el-tab-pane label="我的资料" name="myInfo">
                                                     <user-info :user-info="userInfo" :base-url="baseURL"></user-info>
                                                 </el-tab-pane>
-                                                <el-tab-pane label="我的文章" name="myArticle">
+                                                <el-tab-pane label="我的新闻" name="myArticle">
                                                     <user-news></user-news>
                                                 </el-tab-pane>
                                                 <el-tab-pane label="我的评论" name="myComment">
@@ -165,6 +165,16 @@
             },
         },
         methods: {
+            openDrawer(activeName){
+                if(activeName == "myInfo"){//更新用户信息
+                    this.$API.getUserInfo().then(res => {
+                        let userInfo = res.data;
+                        store.commit("setUserInfo",userInfo);
+                        localStorage.setItem("userInfo",JSON.stringify(userInfo));
+                    });
+                }
+                this.showDrawer = true;
+            },
             loginTo() {
                 //window.open("https://css.dgut.edu.cn/admin/", "_blank");
                 this.$router.push("/login");
@@ -176,7 +186,6 @@
                 window.open(routeUrl.href, '_blank');
             },
             clickTab(e) {
-                window.console.log(e)
             },
             toIndexWebSide() {
                 this.$router.push("/");
