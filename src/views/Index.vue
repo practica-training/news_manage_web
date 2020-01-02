@@ -61,12 +61,6 @@
             CmsFooter
         },
         methods: {
-            initCmsConfig() {//初始化网站配置
-                this.$Get(this.$cmsInterface.DgutGetWebsiteConfig.url).then(res => {
-                    this.cmsConfig = res.data;
-                    store.commit("initCmsConfig", res.data);
-                })
-            },
             initCmsColumns() {//初始化网站栏目
                 if(store.state.cmsColumns.length != 0){
                     this.cmsColumns = store.state.cmsColumns;
@@ -75,8 +69,9 @@
                         if(res.data.success){
                             let newsTypes = res.data.queryResult.list;
                             window.console.log(newsTypes);
-                            this.cmsColumns = newsTypes;//从第一个开始
+                            this.cmsColumns = newsTypes;
                             store.commit("initCmsColumns",newsTypes);
+                            store.commit("initNewsAllTypes",newsTypes);
                         }
                     })
                 }
@@ -94,7 +89,6 @@
             },
         },
         created() {
-            this.initCmsConfig();
             this.initCmsColumns();
             this.initUserInfo();
         },

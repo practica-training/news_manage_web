@@ -44,11 +44,11 @@
                         <template slot-scope="scope">
                             <div v-if="scope.row.state != 1 && scope.row.state != -1 && scope.row.state != -3">
                                 <el-button
-                                        v-if="scope.row.state == 0 || scope.row.state == 2"
                                         @click.stop="editNews(scope.row)"
                                         type="warning"
                                         size="small">
                                     编辑
+<!--                                    v-if="scope.row.state == 0 || scope.row.state == 2"-->
                                 </el-button>
                                 <el-button
                                         v-if="scope.row.state == 0 || scope.row.state == 2"
@@ -78,7 +78,7 @@
                     </el-pagination>
                 </el-col>
             </el-col>
-            <edit-news :drawer-title="editNewsTitle" :is-show="showUpdateNewsDrawer" :news="currEditNews"
+            <edit-news :drawer-title="editNewsTitle" :is-show="showUpdateNewsDrawer" :News="currEditNews"
                        @closeEditNews="closeEditNewsDrawer" @updateNews="updateNewsInfo"></edit-news>
         </template>
         <template v-else>
@@ -176,6 +176,7 @@
                     if (res.data.success) {
                         this.list = res.data.queryResult.list;
                         this.totalElements = res.data.queryResult.total;
+                        window.console.log(this.list)
                     }else{
                         this.$message.error("获取失败,请稍后重试");
                     }
@@ -197,7 +198,7 @@
             //编辑新闻
             editNews(row) {
                 this.showUpdateNewsDrawer = true;
-                if (row) {//是编辑新闻
+                if (row && row.newsId) {//是编辑新闻
                     this.editNewsTitle = "编辑新闻";
                     this.currEditNews = row;
                 } else {//是新建新闻

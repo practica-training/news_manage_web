@@ -9,6 +9,7 @@ export default new Vuex.Store({
         userId:localStorage.getItem("userId")?localStorage.getItem("userId"):"",//用户Id
         userInfo:localStorage.getItem("userInfo")?JSON.parse(localStorage.getItem("userInfo")):"",//用户信息
         verifiedInfo:"",                         //实名认证信息
+        newsAllTypes:[],                         //新闻的所有类别
         cmsConfig: "",                           //网站配置
         cmsColumns: [],                          //网站栏目
         cmsCarouselList: null,                   //首页轮播图
@@ -29,6 +30,9 @@ export default new Vuex.Store({
         },
         setVerifiedInfo(state,data){//保存实名认证信息
             state.verifiedInfo = data;
+        },
+        initNewsAllTypes(state, data) {            //初始化新闻所有类型
+            state.newsAllTypes = data;
         },
         initCmsConfig(state, data) {             //初始化网站配置
             state.cmsConfig = data;

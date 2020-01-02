@@ -24,7 +24,9 @@
                     >
                         <i slot="default" class="el-icon-plus"></i>
                         <div slot="file">
-                            <img class="el-upload-list__item-thumbnail" :src="newsAvatar.url && newsAvatar.url.indexOf('blob') != -1 ? newsAvatar.url : baseUrl + newsAvatar.url" :alt="newsAvatar.name">
+                            <img class="el-upload-list__item-thumbnail"
+                                 :src="newsAvatar.url && newsAvatar.url.indexOf('blob') != -1 ? newsAvatar.url : baseUrl + newsAvatar.url"
+                                 :alt="newsAvatar.name">
                             <span class="el-upload-list__item-actions">
                     <span v-if="!disabled" class="el-upload-list__item-delete" @click="handleRemove">
                       <i class="el-icon-delete"></i>
@@ -32,6 +34,15 @@
                 </span>
                         </div>
                     </el-upload>
+                </el-form-item>
+                <el-form-item label="类别">
+                    <el-checkbox-group v-model="newsTypes" size="small" @change="changeNewsType">
+                        <template v-for="item in newsAllTypes">
+                            <el-checkbox :key="item.id" :label="item.id" :value="item.id" :name="item.id" border>
+                                {{item.name}}
+                            </el-checkbox>
+                        </template>
+                    </el-checkbox-group>
                 </el-form-item>
                 <el-form-item label="内容">
                     <quill-editor
@@ -55,7 +66,9 @@
 </template>
 
 <script>
-    import {Drawer, Upload, Dialog, Form, FormItem,Input,Button} from "element-ui"
+    import {Drawer, Upload, Dialog, Form, FormItem, Input, Button, CheckboxGroup, Checkbox} from "element-ui"
+    import store from "../store"
+
     const toolbarOptions = [
         ["bold", "italic", "underline", "strike"], // 加粗 斜体 下划线 删除线
         ["blockquote", "code-block"], // 引用  代码块
@@ -75,6 +88,7 @@
 
     export default {
         name: "EditNews",
+        store,
         props: {
             IsShow: {
                 type: Boolean,
@@ -84,8 +98,8 @@
                 type: String,
                 default: "新建新闻"
             },
-            News:{
-                type:Object
+            News: {
+                type: Object
             }
         },
         components: {
@@ -94,14 +108,17 @@
             [Dialog.name]: Dialog,
             [Form.name]: Form,
             [FormItem.name]: FormItem,
-            [Input.name]:Input,
-            [Button.name]:Button
+            [Input.name]: Input,
+            [Button.name]: Button,
+            [CheckboxGroup.name]: CheckboxGroup,
+            [Checkbox.name]: Checkbox
         },
         data() {
             return {
-                baseUrl:this.$API.BaseUrl,
-                newsTitle:"",
-                newsAvatar: "",
+                baseUrl: this.$API.BaseUrl,
+                newsTitle: "",
+                newsAvatar: {},
+                newsTypes: [],
                 content: "",
                 fileList: [],
                 editorOption: {
@@ -113,7 +130,27 @@
                         }
                     }
                 },
-                disabled:false
+                newsAllTypes: store.state.newsAllTypes,//新闻的所有类型
+                disabled: false
+            }
+        },
+        watch: {
+            '$store.state.newsAllTypes'(newVal) {
+                if (newVal) {
+                    this.newsAllTypes = newVal;
+                }
+            },
+            News(newVal) {
+                if (newVal && newVal.newsId) {//如果有，则是编辑新闻
+                    this.content = newVal.content;
+                    this.newsTitle = newVal.newsTitle;
+                    this.newsAvatar.url = newVal.newsAvatar;
+                    this.newsTypes = newVal.newsTypeSet;
+                    this.fileList.push({
+                        name: "temp.png",
+                        url: newVal.newsAvatar
+                    })
+                }
             }
         },
         methods: {
@@ -127,6 +164,11 @@
             },
             closeEditNews() {
                 this.$emit("closeEditNews");
+            },
+            //改变了新闻类型
+            changeNewsType(e) {
+                window.console.log(e);
+                window.console.log(this.newsTypes)
             },
             //改变了封面图片
             changeImage(file) {
@@ -147,8 +189,9 @@
                         loading.close();
                         if (res.data.success) {
                             this.newsAvatar.url = "/upload/getImage?fileName=" + res.data.url;
+                            window.console.log(this.newsAvatar)
                         }
-                    }).catch(()=>{
+                    }).catch(() => {
                         loading.close();
                     })
                 }
@@ -157,7 +200,7 @@
                 this.$refs.uploadNewsAvatarComponent.clearFiles();
             },
             //取消
-            cancel(){
+            cancel() {
                 this.newsTitle = "";
                 this.newsAvatar = "";
                 this.content = "";
@@ -165,70 +208,67 @@
                 this.closeEditNews();
             },
             //保存新闻为草稿
-            saveNews(){
-                if(!this.newsTitle){
+            saveNews() {
+                if (!this.newsTitle) {
                     this.$message.error("新闻标题不能为空");
                     return;
                 }
-                if(!this.newsAvatar){
+                if (!this.newsAvatar) {
                     this.$message.error("请上传新闻封面图片");
                     return;
                 }
-                if(!this.content){
+                if (this.newsTypes.length == 0) {
+                    this.$message.error("请至少选择一个新闻类别");
+                    return;
+                }
+                if (!this.content) {
                     this.$message.error("新闻内容不能为空");
                     return;
                 }
                 window.console.log(this.News);
                 let loading = this.$loading();
-                if(this.News && this.News.newsId){//是编辑新闻
-                    this.$API.updateNews(this.News.newsId,this.newsTitle,this.newsAvatar.url,this.content).then(res => {
+                if (this.News && this.News.newsId) {//是编辑新闻
+                    this.$API.updateNews(this.News.newsId, this.newsTitle, this.newsAvatar.url, this.content).then(res => {
                         loading.close();
                         window.console.log(res);
-                        this.$emit("updateNews",{
-                            newsTitle:this.newsTitle,
-                            newsAvatar:this.newsAvatar.url,
-                            content:this.content
+                        this.$emit("updateNews", {
+                            newsTitle: this.newsTitle,
+                            newsAvatar: this.newsAvatar.url,
+                            content: this.content
                         });
-                    }).catch(()=>{
+                    }).catch(() => {
                         loading.close();
                     })
-                }else{
-                    this.$API.addNews(this.newsTitle,this.newsAvatar.url,this.content).then(res => {
+                } else {
+                    this.$API.addNews(this.newsTitle, this.newsAvatar.url, this.content).then(res => {
                         loading.close();
-                        if(res.data.success){
+                        if (res.data.success) {
                             this.$message.success("保存成功");
-                            this.$emit("updateNews",res.data.newsDTO);
-                        }else{
+                            this.$emit("updateNews", res.data.newsDTO);
+                        } else {
                             this.$message.success("保存失败,请重试");
                         }
-                    }).catch(()=>{
+                    }).catch(() => {
                         loading.close();
                         this.$message.success("发生意外错误,保存失败");
                     });
                 }
             }
         },
-        created() {
-            if(this.News && this.News.newsId){//如果有，则是编辑新闻
-                this.content = this.News.content;
-                this.newsTitle = this.News.newsTitle;
-                this.newsAvatar.url = this.News.newsAvatar;
-            }
-        }
     }
 </script>
 
 <style scoped>
-    .cms-edit-news-operation-box{
+    .cms-edit-news-operation-box {
         width: 100%;
         position: fixed;
         bottom: 0;
         left: 0;
         padding: 1rem 0;
-        background-color: rgba(255,255,255,0.7);
+        background-color: rgba(255, 255, 255, 0.7);
     }
 
-    .cms-edit-news-operation{
+    .cms-edit-news-operation {
         display: flex;
         justify-content: space-around;
     }
