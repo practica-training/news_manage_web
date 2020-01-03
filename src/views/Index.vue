@@ -68,7 +68,6 @@
                     this.$API.getNewsTypes().then(res => {
                         if(res.data.success){
                             let newsTypes = res.data.queryResult.list;
-                            window.console.log(newsTypes);
                             this.cmsColumns = newsTypes;
                             store.commit("initCmsColumns",newsTypes);
                             store.commit("initNewsAllTypes",newsTypes);

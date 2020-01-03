@@ -128,7 +128,8 @@
                 this.navigatorBarPhoneOpen = [];
                 this.isShow = false;
                 let routeUrl = this.$router.resolve({
-                    path: this.CmsSearchRouterTo + '?keyword=' + this.keyword,
+                    path: "/search",
+                    query: {keyword: this.keyword}
                 });
                 window.open(routeUrl.href, '_blank');
             },

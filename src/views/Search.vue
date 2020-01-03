@@ -14,68 +14,94 @@
                 <!--                列表组件，根据不同类型应用不同的列表组件-->
                 <el-card>
                     <div slot="header" class="cms-not-copy cms-table-header">
-                        <span class="cms-not-copy cms-table-title" v-show="searchResultTitle"><i class="el-icon-search"></i>&nbsp;{{searchResultTitle}}</span>
+                        <span class="cms-not-copy cms-table-title"><i class="el-icon-search"></i>&nbsp;'{{keyword}}' 的搜索结果共有 {{totalElements}} 条</span>
                     </div>
-                    <el-table class="cms-select-news cms-not-copy" stripe :show-header="false" :data="newsList"
+                    <el-table class="cms-select-news cms-not-copy" stripe :data="newsList"
                               @row-click="lookArticle" style="cursor: pointer;">
-                        <el-table-column prop="title">
+                        <el-table-column label="新闻标题" prop="newsTitle">
                         </el-table-column>
-                        <el-table-column align="right">
+                        <el-table-column label="新闻类型">
                             <template slot-scope="scope">
-                                <span>{{ scope.row.createTime.split(' ')[0] }}&nbsp;</span>
+                                <template v-for="item in scope.row.newsTypeSet">
+                                    <span :key="item.id">{{item.name}}&nbsp;</span>
+                                </template>
+                            </template>
+                        </el-table-column>
+                        <el-table-column label="发布时间" align="right">
+                            <template slot-scope="scope">
+                                <span>{{ scope.row.publishTime}}&nbsp;</span>
                                 <i class="el-icon-arrow-right"></i>
                             </template>
                         </el-table-column>
                     </el-table>
                 </el-card>
+                <el-col :span="24" style="display: flex;justify-content: center;padding: 1rem 0;">
+                    <el-pagination
+                            :current-page="1"
+                            background
+                            layout="prev, pager, next, total"
+                            :hide-on-single-page="true"
+                            :total="totalElements" @size-change="sizeChange" @current-change="currentChange">
+                    </el-pagination>
+                </el-col>
             </el-col>
         </el-col>
     </el-row>
 </template>
 
 <script>
+    import store from "../store";
+    import {Pagination} from  "element-ui"
     export default {
         name: "Search",
+        store,
         data() {
             return {
-                searchResultTitle: "",
                 newsList: [],
+                page:1,
+                keyword:"",
+                totalElements:0
             }
+        },
+        components:{
+            [Pagination.name]:Pagination
         },
         methods: {
             checkUrl() {
                 //得到请求的参数
-                let tempJson = this.$route.query;
-                //遍历得到要获取的columns
-                let quesion = "";
-                for (let key in tempJson) {
-                    if (key) {
-                        quesion = tempJson[key];
-                        break;
-                    }
-                }
-                return quesion;
+                return this.$route.query.keyword;
             },
-            async init() {//初始化columns
-                let quesion = this.checkUrl();//得到栏目
-                if (quesion) {//如果有,则赋值
-                    let url = this.$cmsInterface.DgutGetSearch.url + "?keyword=" + quesion;
-                    await this.$Get(url).then(res => {
-                        if (res.code == 0) {
-                            this.newsList = res.data.content;
-                            this.searchResultTitle = "'" + quesion + "' 的搜索结果有" + this.newsList.length + "条";
-                        }
-                    })
+            init() {//初始化columns
+                let keyword = this.checkUrl();//得到栏目
+                if (keyword) {//如果有,则赋值
+                    this.keyword = keyword;
+                    this.initSearchResult();
                 } else {//没有参数，跳转回主页
                     this.$router.push({path: '/'});
                 }
             },
+            initSearchResult(){
+                this.$API.searchNewsByNewsTitle(this.keyword,this.page).then(res => {
+                    window.console.log(res)
+                    if(res.data.success){
+                        this.newsList = res.data.queryResult.list;//列表数据
+                        this.totalElements = res.data.queryResult.total;
+                    }
+                })
+            },
             lookArticle(row) {
-                this.$router.push({path: '/article?' + row.articleId});
-                // let routeUrl = this.$router.resolve({
-                //     path: "/article?" + row.articleId,
-                // });
-                // window.open(routeUrl.href, '_blank');
+                let routeUrl = this.$router.resolve({
+                    path: "/article",
+                    query: {id: row.newsId}
+                });
+                window.open(routeUrl.href, '_blank');
+            },
+            sizeChange() {
+
+            },
+            currentChange(currPage) {
+                this.page = currPage;
+                this.initSearchResult();
             }
         },
         created() {

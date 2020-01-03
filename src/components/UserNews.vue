@@ -1,6 +1,6 @@
 <template>
     <el-col :span="24">
-        <template v-if="true || userInfo.userState == 2">
+        <template v-if="userInfo.userState == 2">
             <el-col :lg="2" :md="3" :sm="4" :xs="5" style="height: 100vh;">
                 <el-tabs :tab-position="position" class="user-news-tabs" style="height: 100%;"
                          @tab-click="clickNewsTab">
@@ -30,7 +30,7 @@
                             <span>{{scope.row.createTime}}&nbsp;</span>
                         </template>
                     </el-table-column>
-                    <el-table-column label="发布时间">
+                    <el-table-column v-if="newsState == 3" label="发布时间">
                         <template slot-scope="scope">
                             <span v-if="scope.row.publishTime">{{scope.row.publishTime}}&nbsp;</span>
                             <span v-else>未发布</span>
@@ -119,6 +119,13 @@
                 totalElements:0,
             }
         },
+        watch:{
+            '$store.state.userInfo'(newVal){
+                if(newVal){
+                    this.userInfo = newVal
+                }
+            }
+        },
         methods: {
             clickNewsTab(tab) {
                 this.newsState = tab.name;
@@ -129,7 +136,7 @@
                 return row.newsTitle;
             },
             formatNewsState(row) {
-                let newsState = row.newsState;
+                let newsState = row.state;
                 let result = "";
                 //0草稿 1审核中 2审核失败 3已发布 -1已删除 -2违规 -3下架
                 switch (newsState) {
@@ -158,7 +165,7 @@
                         break;
                     }
                     case -3: {
-                        result = "下架";
+                        result = "已下架";
                         break;
                     }
                     default: {
@@ -222,7 +229,7 @@
             //发布新闻
             publishNews(row) {
                 let loading = this.$loading();
-                this.$API.updateNews(row.newsId, row.newsTitle, row.newsAvatar, row.content, 1).then(res => {
+                this.$API.updateNews(row.newsId, row.newsTitle, row.newsAvatar, row.newsTypeSet, row.content, 1).then(res => {
                     if(res.data.success){
                         this.$message.success("已提交审核,通过审核将自动发布");
                         this.initNewsList();
@@ -237,7 +244,7 @@
             //下架新闻
             deleteNews(row) {
                 let loading = this.$loading();
-                this.$API.updateNews(row.newsId, row.newsTitle, row.newsAvatar, row.content, -3).then(res => {
+                this.$API.updateNews(row.newsId, row.newsTitle, row.newsAvatar, row.newsTypeSet, row.content, -3).then(res => {
                     loading.close();
                     if(res.data.success){
                         this.$message.success("已下架");

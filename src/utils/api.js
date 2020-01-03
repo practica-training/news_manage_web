@@ -1,11 +1,11 @@
 import axios from 'axios';
 import store from '../store'
 
-//let BaseUrl = "http://192.168.1.120:8888";
+//let BaseUrl = "http://192.168.1.125:8888";
 //let BaseUrl = "http://192.168.1.101:8888";
 //let BaseUrl = "http://10.60.9.86:8888";
-let BaseUrl = "http://zzhong.wang:8888";
 //let BaseUrl = "http://10.62.120.80:8888";
+let BaseUrl = "http://zzhong.wang:8888";
 
 // 创建axios实例
 const Request = axios.create({
@@ -208,6 +208,25 @@ export default {
     },
 
     /**
+     * 通过新闻标题获得新闻
+     * @param newsTitle
+     * @param page
+     * @returns {AxiosPromise}
+     */
+    searchNewsByNewsTitle(newsTitle,page){
+        let url = "/manage/news/name?newsTitle=" + newsTitle + "&page="+page;
+        return request(BaseUrl + url, "GET", {});
+    },
+
+    /**
+     * 获得新闻轮播图
+     * @returns {AxiosPromise}
+     */
+    getNewsCarouselList(){
+        return request(BaseUrl + "/manage/news/findNewsCarouselList", "GET", {});
+    },
+
+    /**
      * 获得指定类型的新闻列表
      * @param typeId
      * @param page
@@ -248,11 +267,12 @@ export default {
      * @param content
      * @returns {AxiosPromise}
      */
-    addNews(newsTitle,newsAvatar,newsType,content){
+    addNews(newsTitle,newsAvatar,newsTypes,content){
         return request(BaseUrl + "/manage/news", "POST", {
             user:store.state.userInfo,
             newsTitle:newsTitle,
             newsAvatar:newsAvatar,
+            newsTypeSet:newsTypes,
             content:content,
             newsState:0
         });
@@ -267,12 +287,12 @@ export default {
      * @returns {AxiosPromise}
      */
     updateNews(newsId,newsTitle,newsAvatar,newsTypes,content,newsState = 0){
-        //newsTypeSet:newsTypes,
         return request(BaseUrl + "/manage/news/id/" + newsId, "PUT", {
             user:store.state.userInfo,
             newsTitle:newsTitle,
             newsAvatar:newsAvatar,
             content:content,
+            newsTypeSet:newsTypes,
             newsState:newsState
         });
     },
@@ -394,10 +414,12 @@ export default {
      * @param reason
      * @returns {AxiosPromise}
      */
-    reportNews(newsId,reason){
+    reportNews(news,reason){
         return request(BaseUrl + "/manage/newsReport", "POST", {
-            userId:store.state.userId,
-            newsId:newsId,
+            user:store.state.userInfo,
+            news:{
+                id:news.newsId
+            },
             reportReason:reason
         });
     },

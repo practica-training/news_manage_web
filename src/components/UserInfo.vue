@@ -676,7 +676,11 @@
 
             //显示举报
             showReport() {
-                this.showReportDrawer = true;
+                if (store.state.userId && store.state.userInfo) {
+                    this.showReportDrawer = true;
+                } else {
+                    this.$message.error("请先登录");
+                }
             },
 
             //取消举报

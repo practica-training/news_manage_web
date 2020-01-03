@@ -188,18 +188,22 @@
                 }
             },
             showReportNews() {//显示举报新闻抽屉
-                this.showReportNewsDrawer = true;
+                if (store.state.userId && store.state.userInfo) {
+                    this.showReportNewsDrawer = true;
+                } else {
+                    this.$message.error("请先登录");
+                }
             },
             cancelReport() {
                 this.showReportNewsDrawer = false;
             },
             //提交举报
-            submitReport(content) {
+            submitReport(content){
                 this.showReportNewsDrawer = false;
                 let loading = this.$loading({
                     text: "正在提交"
                 });
-                this.$API.reportNews(this.articleInfo.id, content).then(res => {
+                this.$API.reportNews(this.articleInfo, content).then(res => {
                     loading.close();
                     if (res.data.success) {
                         this.$message.success("已提交举报，感谢您为净化网络环境做贡献");

@@ -4,8 +4,8 @@
         <el-carousel @change="changeCarousel" :height="imgHeight+'px'" class="cms-el-carousel" :loop="isLoop"
                      :autoplay="isAutoplay" :interval="interval" :arrow="arrow">
             <el-carousel-item v-for="(item,index) in CarouselList" :key="index">
-                <img :title="item[ImgDecision]" ref="image" style="height: 100%;width:auto;cursor: pointer;" :src="ImgHost + item[ImgUrl]"
-                     @click="lookArticle(item[ImgRoute])"/>
+                <img :alt="item.newsTitle" ref="image" style="height: 100%;width:auto;cursor: pointer;" :src="ImgHost + item.newsAvatar"
+                     @click="lookArticle(item.newsId)"/>
             </el-carousel-item>
             <transition name="el-zoom-in-bottom">
                 <div v-show="msgShow" class="cms-carousel-info cms-not-copy">{{msg}}</div>
@@ -78,19 +78,17 @@
                 this.msgShow = false;
                 //重新获取当前图片的描述
                 let msg = this.CarouselList[currIndex];
-                this.msg = msg[this.ImgDecision];
+                this.msg = msg.newsTitle;
                 //重新显示图片的描述
                 setTimeout(function () {
                     that.msgShow = true;
                 },200);
             },
-            lookArticle(linkStr) {//查看文章
-                linkStr = linkStr.substring(0, linkStr.length - 1);
-                linkStr = linkStr.substring(linkStr.lastIndexOf("/") + 1, linkStr.length);
+            lookArticle(id) {//查看文章
                 let routeUrl = this.$router.resolve({
-                    path: this.CarouselRoute,
+                    path: "/article",
                     query:{
-                        id:linkStr
+                        id:id
                     },
                 });
                 window.open(routeUrl.href, '_blank');

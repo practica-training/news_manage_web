@@ -5,8 +5,7 @@
         <el-col class="cms-home-box cms-bottom-distance" :span="24">
             <!--          轮播组件-->
             <el-col :md="14" :sm="24" :xs="24" style="height: 100%;">
-                <cms-carousel :img-host="cmsHost" :carousel-list="cmsCarouselList" :img-url="cmsCarouselImgUrl"
-                              :img-decision="cmsCarouselImgDecision" :img-route="cmsCarouselImgRoute"
+                <cms-carousel :img-host="cmsHost" :carousel-list="cmsCarouselList"
                               :carousel-route="cmsArticleRoute" ref="CmsCarousel"
                               @getCarouselHeight="getCarouselHeight"></cms-carousel>
             </el-col>
@@ -67,14 +66,11 @@
         },
         data() {
             return {
-                cmsHost: "",                       //域名根地址
+                cmsHost: this.$API.BaseUrl,                       //域名根地址
                 cmsArticleRoute: "/article",       //查看文章跳转的路由
                 cmsCarouselHeight: "",
 
                 cmsCarouselList: [],               //轮播组件显示的图片列表
-                cmsCarouselImgUrl: "imageUrl",     //图片链接的字段名
-                cmsCarouselImgDecision: "alterStr",//图片描述的字段名
-                cmsCarouselImgRoute: "linkStr",    //图片跳转的链接字段
 
                 newsList: [],
                 newsTitle: "财经新闻",
@@ -106,10 +102,13 @@
                 if (store.state.cmsCarouselList) {//如果已经有轮播的列表了,就不请求了
                     this.cmsCarouselList = store.state.cmsCarouselList;
                 } else {//否则获取一次
-                    this.$Get(this.$cmsInterface.DgutGetCarouselList.url).then((response) => {
-                        this.cmsCarouselList = response.data;
-                        //获取以后保存进全局变量,减少请求
-                        store.commit("initCmsCarouselList", response.data);
+                    this.$API.getNewsCarouselList().then(res => {
+                        if (res.data.success) {
+                            this.cmsCarouselList = res.data.queryResult.list;//列表数据
+                            window.console.log(this.cmsCarouselList)
+                            //获取以后保存进全局变量,减少请求
+                            store.commit("initCmsCarouselList", this.cmsCarouselList);
+                        }
                     })
                 }
             },
@@ -202,7 +201,6 @@
             }
         },
         created() {
-            this.cmsHost = this.$cmsInterface.DgutCMSHost;        //初始化根域名
             this.initCmsCarouselList();                           //初始化轮播图
             this.initCmsNewsDynamicList(0);                  //初始化学院要闻列表
             this.initCmsNoticeList();                             //初始化学院通知列表
