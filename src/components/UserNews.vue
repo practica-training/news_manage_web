@@ -44,11 +44,11 @@
                         <template slot-scope="scope">
                             <div v-if="scope.row.state != 1 && scope.row.state != -1 && scope.row.state != -3">
                                 <el-button
+                                        v-if="scope.row.state == 0 || scope.row.state == 2"
                                         @click.stop="editNews(scope.row)"
                                         type="warning"
                                         size="small">
                                     编辑
-<!--                                    v-if="scope.row.state == 0 || scope.row.state == 2"-->
                                 </el-button>
                                 <el-button
                                         v-if="scope.row.state == 0 || scope.row.state == 2"
@@ -213,6 +213,7 @@
                     this.currEditNews.newsTitle = news.newsTitle;
                     this.currEditNews.newsAvatar = news.newsAvatar;
                     this.currEditNews.content = news.content;
+                    this.currEditNews.newsTypeSet = news.newsTypes;
                 }
             },
             closeEditNewsDrawer() {

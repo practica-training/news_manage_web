@@ -248,7 +248,7 @@ export default {
      * @param content
      * @returns {AxiosPromise}
      */
-    addNews(newsTitle,newsAvatar,content){
+    addNews(newsTitle,newsAvatar,newsType,content){
         return request(BaseUrl + "/manage/news", "POST", {
             user:store.state.userInfo,
             newsTitle:newsTitle,
@@ -266,8 +266,9 @@ export default {
      * @param content
      * @returns {AxiosPromise}
      */
-    updateNews(newsId,newsTitle,newsAvatar,content,newsState = 0){
-        return request(BaseUrl + "/manage/news/id/" + newsId, "POST", {
+    updateNews(newsId,newsTitle,newsAvatar,newsTypes,content,newsState = 0){
+        //newsTypeSet:newsTypes,
+        return request(BaseUrl + "/manage/news/id/" + newsId, "PUT", {
             user:store.state.userInfo,
             newsTitle:newsTitle,
             newsAvatar:newsAvatar,

@@ -36,9 +36,9 @@
                     </el-upload>
                 </el-form-item>
                 <el-form-item label="类别">
-                    <el-checkbox-group v-model="newsTypes" size="small" @change="changeNewsType">
+                    <el-checkbox-group v-model="newsChangeTypes" size="small">
                         <template v-for="item in newsAllTypes">
-                            <el-checkbox :key="item.id" :label="item.id" :value="item.id" :name="item.id" border>
+                            <el-checkbox :key="item.id" :label="item.id" border @change="changeNewsType(item.id,item.name)">
                                 {{item.name}}
                             </el-checkbox>
                         </template>
@@ -118,7 +118,8 @@
                 baseUrl: this.$API.BaseUrl,
                 newsTitle: "",
                 newsAvatar: {},
-                newsTypes: [],
+                newsChangeTypes: [],//存新闻类型的id，用于匹配
+                newsTypes:[],//保存时提交的新闻类型，id和name
                 content: "",
                 fileList: [],
                 editorOption: {
@@ -146,6 +147,10 @@
                     this.newsTitle = newVal.newsTitle;
                     this.newsAvatar.url = newVal.newsAvatar;
                     this.newsTypes = newVal.newsTypeSet;
+                    let types = newVal.newsTypeSet;//新闻类别
+                    for(let i = 0; i < types.length; i++){
+                        this.newsChangeTypes.push(types[i].id);
+                    }
                     this.fileList.push({
                         name: "temp.png",
                         url: newVal.newsAvatar
@@ -166,9 +171,27 @@
                 this.$emit("closeEditNews");
             },
             //改变了新闻类型
-            changeNewsType(e) {
-                window.console.log(e);
-                window.console.log(this.newsTypes)
+            changeNewsType(id,name) {
+                let type = {
+                    id:id,
+                    name:name
+                };
+                let typeTempList = this.newsTypes;
+                let index = -1;
+                for(let i = 0;i<typeTempList.length;i++){
+                    if(typeTempList[i].id == type.id){
+                        index = i;
+                    }
+                }
+                if(index != -1){
+                    if(index == 0){
+                        this.newsTypes = this.newsTypes.slice(1,this.newsTypes.length);
+                    }else{
+                        this.newsTypes = this.newsTypes.slice(0,index).concat(this.newsTypes.slice(index+1,this.newsTypes.length));
+                    }
+                }else{
+                    this.newsTypes.push(type);
+                }
             },
             //改变了封面图片
             changeImage(file) {
@@ -217,7 +240,7 @@
                     this.$message.error("请上传新闻封面图片");
                     return;
                 }
-                if (this.newsTypes.length == 0) {
+                if (this.newsChangeTypes.length == 0) {
                     this.$message.error("请至少选择一个新闻类别");
                     return;
                 }
@@ -228,19 +251,20 @@
                 window.console.log(this.News);
                 let loading = this.$loading();
                 if (this.News && this.News.newsId) {//是编辑新闻
-                    this.$API.updateNews(this.News.newsId, this.newsTitle, this.newsAvatar.url, this.content).then(res => {
+                    this.$API.updateNews(this.News.newsId, this.newsTitle, this.newsAvatar.url,this.newsTypes, this.content).then(res => {
                         loading.close();
                         window.console.log(res);
                         this.$emit("updateNews", {
                             newsTitle: this.newsTitle,
                             newsAvatar: this.newsAvatar.url,
-                            content: this.content
+                            content: this.content,
+                            newsTypes:this.newsTypes
                         });
                     }).catch(() => {
                         loading.close();
                     })
                 } else {
-                    this.$API.addNews(this.newsTitle, this.newsAvatar.url, this.content).then(res => {
+                    this.$API.addNews(this.newsTitle, this.newsAvatar.url,this.newsTypes,this.content).then(res => {
                         loading.close();
                         if (res.data.success) {
                             this.$message.success("保存成功");
