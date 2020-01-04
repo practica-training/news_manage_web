@@ -3,26 +3,18 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 import axios from 'axios'
-import {Get,Post} from './utils/http'
 import VueAxios from 'vue-axios'
 //引入axios
 Vue.use(VueAxios, axios);
 
-//全局引用包装的axios
-Vue.prototype.$Post=Post;
-Vue.prototype.$Get=Get;
-
 import API from './utils/api'
 Vue.prototype.$API = API;
-
-//打印插件
-import Print from 'vue-print-nb';
-Vue.use(Print);
 
 //图片预览插件
 import ImageViewer from './components/imageViewer';
 Vue.use(ImageViewer);
 
+// eslint-disable-next-line no-unused-vars
 import animate from 'animate.css'
 
 //引入Quill富文本编辑器

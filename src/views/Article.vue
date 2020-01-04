@@ -8,9 +8,9 @@
                 <!--                返回按钮-->
                 <el-card class="hidden-xs-only" style="border: none;background-color: #f0f0f0;padding: 0;">
                     <div class="cms-article-header cms-not-copy">
-                        <div class="cms-table-title cms-cursor" @click="backToLastPage">
-                            <i class="el-icon-s-promotion cms-rotate-y"></i>&nbsp;<span>返回</span>
-                        </div>
+<!--                        <div class="cms-table-title cms-cursor" @click="backToLastPage">-->
+<!--                            <i class="el-icon-s-promotion cms-rotate-y"></i>&nbsp;<span>返回</span>-->
+<!--                        </div>-->
                     </div>
                 </el-card>
                 <img id="preViewImg" @click="$imageViewer" style="display: none;" ref="preViewImg"/>
@@ -18,7 +18,7 @@
                 <!--               文章内容和一些工具-->
                 <el-card class="cms-article-info-box cms-article-box-shadow" style="border: none;">
                     <!--                文章主体-->
-                    <div id="cmsArticle">
+                    <div>
                         <div class="cms-article-title">{{articleInfo.newsTitle}}</div>
                         <div class="cms-article-title-e">
                             <i class="el-icon-collection-tag"></i>
@@ -26,7 +26,6 @@
                                 <span v-if="index != 0" :key="item.id"></span>
                                 <span :key="item.id">{{item.name}}</span>
                             </template>
-                            <!--                            {{articleInfo.likeNumber}}-->
                             &nbsp;&nbsp;
                             <i class="el-icon-time"></i>{{articleInfo.publishTime}}
                             &nbsp;&nbsp;
@@ -123,13 +122,13 @@
                 //得到请求的参数
                 return this.$route.query.id;
             },
-            async init() {//初始化columns
+            init() {//初始化columns
                 let newsId = this.checkUrl();//得到栏目
                 if (newsId) {//如果有,则赋值
                     this.$API.getNewsByNewsId(newsId).then(res => {
                         if (res.data.success) {
                             this.articleInfo = res.data.newsDTO;
-                            //this.formatArticle();
+                            this.formatArticle();
                         } else {//否则没有文章
                         }
                     })
@@ -141,7 +140,6 @@
             initComment(page) {//初始化评论
                 let newsId = this.checkUrl();//得到id
                 this.$API.getCommentsByNewsId(newsId, page).then(res => {
-                    window.console.log(res)
                     if (res.data.success) {
                         this.newsComments = res.data.queryResult.list;
                         this.totalComment = res.data.queryResult.total;
@@ -154,38 +152,37 @@
             currentChange(currPage) {
                 this.initComment(currPage);
             },
-            // formatArticle() {//对文章格式化
-            //     let article = this.articleInfo.articleContent;
-            //     let cmsHost = this.$cmsInterface.DgutCMSHost;
-            //
-            //     //清除掉多余的转行
-            //     article = article.replace(/<br>/g, "");
-            //     article = article.replace(/<br\/>/g, "");
-            //
-            //     //给图片添加样式
-            //     article = article.replace(/<img/g, "<img @click='clickImg($event)' class='cms-article-img'");
-            //
-            //     //给p添加样式
-            //     article = article.replace(/<p/g, "<p class='cms-article-p' ");
-            //
-            //     //给span添加样式
-            //     article = article.replace(/<span/g, "<span class='cms-article-span' ");
-            //
-            //     //修正href链接
-            //     article = article.replace(/href="\//g, "href=\"" + cmsHost + "/");
-            //
-            //     //修正src链接
-            //     article = article.replace(/src="\//g, "src=\"" + cmsHost + "/");
-            //
-            //     this.articleInfo.articleContent = article;
-            // },
+            formatArticle() {//对文章格式化
+                let article = this.articleInfo.content;
+
+                //清除掉多余的转行
+                article = article.replace(/<br>/g, "");
+                article = article.replace(/<br\/>/g, "");
+
+                //给图片添加样式
+                article = article.replace(/<img/g, "<img @click='clickImg($event)' class='cms-article-img'");
+
+                //给p添加样式
+                article = article.replace(/<p/g, "<p class='cms-article-p' ");
+
+                //给span添加样式
+                article = article.replace(/<span/g, "<span class='cms-article-span' ");
+
+                // //修正href链接
+                // article = article.replace(/href="\//g, "href=\"" + cmsHost + "/");
+                //
+                // //修正src链接
+                // article = article.replace(/src="\//g, "src=\"" + cmsHost + "/");
+
+                this.articleInfo.content = article;
+            },
             backToLastPage() {//返回上一页
                 //如果有上一页,则直接返回
-                if (window.history.length > 1) {
-                    history.go(-1);
-                } else {//没有上一页,返回当前节点对应的那一页
-                    this.$router.push({path: '/list?' + this.currCid});
-                }
+                // if (window.history.length > 1) {
+                //     history.go(-1);
+                // } else {//没有上一页,返回当前节点对应的那一页
+                //     this.$router.push({path: '/list?' + this.currCid});
+                // }
             },
             showReportNews() {//显示举报新闻抽屉
                 if (store.state.userId && store.state.userInfo) {
@@ -262,10 +259,8 @@
             },
             cancelComment() {
                 this.showCommentDrawer = false;
-                window.console.log("取消评论")
             },
             submitComment(comment) {
-                window.console.log("提交评论 " + comment);
                 let loading = this.$loading({
                     text: "正在提交"
                 });
@@ -274,8 +269,6 @@
                     loading.close();
                     if (res.data.success) {
                         this.$message.success("评论成功");
-                        window.console.log(res.data.comment);
-                        window.console.log(store.state.userInfo);
                         this.addComment(res.data.comment);
                     } else {
                         this.$message.success("发生错误，评论成功");
@@ -284,10 +277,10 @@
             },
         },
         async created() {
-            this.loadingInstance = this.$loading();
+            let loading = this.$loading();
             await this.init();
             setTimeout(() => {//设置定时器，为了看上去不像闪屏
-                this.loadingInstance.close();
+                loading.close();
             }, 200);
         },
         updated() {
@@ -302,6 +295,7 @@
                 data: {},
                 methods: {
                     clickImg($event) {
+                        window.console.log($event);
                         let currImg = $event.currentTarget;
                         toPreviewImg(currImg.getAttribute("src"));
                     }
