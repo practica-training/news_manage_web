@@ -67,34 +67,47 @@
         data() {
             return {
                 cmsHost: this.$API.BaseUrl,                       //域名根地址
+                newsTypes:store.state.newsAllTypes,//新闻所有类型
                 cmsArticleRoute: "/article",       //查看文章跳转的路由
                 cmsCarouselHeight: "",
 
                 cmsCarouselList: [],               //轮播组件显示的图片列表
-
                 newsList: [],
                 newsTitle: "财经新闻",
-                newsUrl: "/list?id=8abef8d06f59e83e016f59e85bb70000&name=财经",
+                newsUrl: "/list?id=402881e66f6b94e1016f6b950f460000&name=财经",
 
                 noticeList: [],
                 noticeTitle: "教育新闻",
-                noticeUrl: "/list?id=8abef8d06f59e83e016f59e85db80004&name=教育",
+                noticeUrl: "/list?id=402881e66f6b94e1016f6b9511d30004&name=教育",
 
                 dynamicList: [],
                 dynamicTitle: "科技新闻",
-                dynamicUrl: "/list?id=8abef8d06f59e83e016f59e85c6e0001&name=科技",
+                dynamicUrl: "/list?id=402881e66f6b94e1016f6b95101e0001&name=科技",
 
                 scienceList:[],
                 scienceTitle:"娱乐新闻",
-                scienceUrl:"/list?id=8abef8d06f59e83e016f59e85f060007&name=娱乐",
+                scienceUrl:"/list?id=402881e66f6b94e1016f6b9513a10007&name=娱乐",
 
                 communistList: [],
                 communistTitle: "军事新闻",
-                communistUrl: "/list?id=8abef8d06f59e83e016f59e85e960006&name=军事",
+                communistUrl: "/list?id=402881e66f6b94e1016f6b95130f0006&name=军事",
 
                 studentActiveList:[],
                 studentActiveTitle: "时尚新闻",
-                studentActiveUrl: "/list?id=8abef8d06f59e83e016f59e85f740008&name=时尚",
+                studentActiveUrl: "/list?id=402881e66f6b94e1016f6b9514360008&name=时尚",
+            }
+        },
+        watch:{
+            '$store.state.newsAllTypes'(newVal){
+                if(newVal){
+                    this.newsTypes = newVal;
+                    this.newsUrl = "/list?id=" + newVal[0].id + "&name=财经";
+                    this.noticeUrl = "/list?id=" + newVal[4].id + "&name=教育";
+                    this.dynamicUrl = "/list?id=" + newVal[1].id + "&name=科技";
+                    this.scienceUrl = "/list?id=" + newVal[7].id + "&name=娱乐";
+                    this.communistUrl = "/list?id=" + newVal[6].id + "&name=军事";
+                    this.communistUrl = "/list?id=" + newVal[8].id + "&name=时尚";
+                }
             }
         },
         methods: {
@@ -117,7 +130,7 @@
                     if (store.state.cmsNewsDynamicList) {//如果已经有财经新闻列表了,就不请求了
                         this.newsList = store.state.cmsNewsDynamicList.slice(0, num);
                     } else {//否则获取一次
-                        this.$API.getNewsByTypeId("8abef8d06f59e83e016f59e85bb70000", 1).then(res => {
+                        this.$API.getNewsByTypeId(this.newsTypes[0].id, 1).then(res => {
                             if (res.data.success) {
                                 this.newsList = res.data.queryResult.list;//列表数据
                                 //获取以后保存进全局变量,减少请求
@@ -131,7 +144,7 @@
                 if (store.state.cmsNoticeList) {
                     this.noticeList = store.state.cmsNoticeList;
                 } else {//否则获取一次
-                    this.$API.getNewsByTypeId("8abef8d06f59e83e016f59e85db80004", 1).then(res => {
+                    this.$API.getNewsByTypeId(this.newsTypes[4].id, 1).then(res => {
                         if (res.data.success) {
                             this.noticeList = res.data.queryResult.list;//列表数据
                             //获取以后保存进全局变量,减少请求
@@ -144,7 +157,7 @@
                 if (store.state.cmsTeachingDynamicList) {
                     this.dynamicList = store.state.cmsTeachingDynamicList;
                 } else {//否则获取一次
-                    this.$API.getNewsByTypeId("8abef8d06f59e83e016f59e85c6e0001", 1).then(res => {
+                    this.$API.getNewsByTypeId(this.newsTypes[1].id, 1).then(res => {
                         if (res.data.success) {
                             this.dynamicList = res.data.queryResult.list;//列表数据
                             //获取以后保存进全局变量,减少请求
@@ -157,7 +170,7 @@
                 if (store.state.cmsScienceList) {
                     this.scienceList = store.state.cmsScienceList;
                 } else {//否则获取一次
-                    this.$API.getNewsByTypeId("8abef8d06f59e83e016f59e85f060007", 1).then(res => {
+                    this.$API.getNewsByTypeId(this.newsTypes[7].id, 1).then(res => {
                         if (res.data.success) {
                             this.scienceList = res.data.queryResult.list;//列表数据
                             //获取以后保存进全局变量,减少请求
@@ -170,7 +183,7 @@
                 if (store.state.cmsCommunistList) {
                     this.communistList = store.state.cmsCommunistList;
                 } else {//否则获取一次
-                    this.$API.getNewsByTypeId("8abef8d06f59e83e016f59e85e960006", 1).then(res => {
+                    this.$API.getNewsByTypeId(this.newsTypes[6].id, 1).then(res => {
                         if (res.data.success) {
                             this.communistList = res.data.queryResult.list;//列表数据
                             //获取以后保存进全局变量,减少请求
@@ -183,7 +196,7 @@
                 if (store.state.cmsStudentActiveList) {//如果已经有学生活动列表了,就不请求了
                     this.studentActiveList = store.state.cmsStudentActiveList;
                 } else {//否则获取一次
-                    this.$API.getNewsByTypeId("8abef8d06f59e83e016f59e85f740008", 1).then(res => {
+                    this.$API.getNewsByTypeId(this.newsTypes[8].id, 1).then(res => {
                         if (res.data.success) {
                             this.studentActiveList =  res.data.queryResult.list;//列表数据
                             //获取以后保存进全局变量,减少请求

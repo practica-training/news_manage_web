@@ -233,8 +233,8 @@
                         let loading = this.$loading({
                             text: "正在登录"
                         });
-                        this.$API.userLogin(name, password).then(function (res) {
-                            if (res.success) {//登录成功
+                        this.$API.userLogin(name, password).then(res => {
+                            if (res.data.success) {//登录成功
                                 store.commit("setUserId",res.data.id);
                                 localStorage.setItem("userId",res.data.id);
                                 that.$API.getUserInfo().then(res => {

@@ -26,14 +26,6 @@ export default new Router({
           component: () => import(/* webpackChunkName: "about" */ './views/List')
         },
         {
-          path: 'else',
-          name: 'elselist',
-          // route level code-splitting
-          // this generates a separate chunk (about.[hash].js) for this route
-          // which is lazy-loaded when the route is visited.
-          component: () => import(/* webpackChunkName: "about" */ './views/ElseList')
-        },
-        {
           path: 'article',
           name: 'article',
           // route level code-splitting
@@ -48,30 +40,6 @@ export default new Router({
           // this generates a separate chunk (about.[hash].js) for this route
           // which is lazy-loaded when the route is visited.
           component: () => import(/* webpackChunkName: "about" */ './views/Search')
-        },
-        {
-          path: 'teacher',
-          name: 'Teacher',
-          // route level code-splitting
-          // this generates a separate chunk (about.[hash].js) for this route
-          // which is lazy-loaded when the route is visited.
-          component: () => import(/* webpackChunkName: "about" */ './views/TeacherPlus')
-        },
-        {
-          path: 'teacherPlus',
-          name: 'TeacherPlus',
-          // route level code-splitting
-          // this generates a separate chunk (about.[hash].js) for this route
-          // which is lazy-loaded when the route is visited.
-          component: () => import(/* webpackChunkName: "about" */ './views/TeacherPlus')
-        },
-        {
-          path: 'comment',
-          name: '进行评价的组件',
-          // route level code-splitting
-          // this generates a separate chunk (about.[hash].js) for this route
-          // which is lazy-loaded when the route is visited.
-          component: () => import(/* webpackChunkName: "about" */ './components/NewsComment')
         },
       ]
     },

@@ -4,7 +4,7 @@
         <el-carousel @change="changeCarousel" :height="imgHeight+'px'" class="cms-el-carousel" :loop="isLoop"
                      :autoplay="isAutoplay" :interval="interval" :arrow="arrow">
             <el-carousel-item v-for="(item,index) in CarouselList" :key="index">
-                <img :alt="item.newsTitle" ref="image" style="height: 100%;width:auto;cursor: pointer;" :src="ImgHost + item.newsAvatar"
+                <img :alt="item.newsTitle" ref="image" class="cms-carousel-img" :src="ImgHost + item.newsAvatar"
                      @click="lookArticle(item.newsId)"/>
             </el-carousel-item>
             <transition name="el-zoom-in-bottom">
